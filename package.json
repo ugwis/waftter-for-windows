@@ -1,0 +1,15 @@
+{
+  "name": "waftter",
+  "main": "index.html",
+  "description":"A simple twitter client",
+  "version":"0.0000",
+  "keywords":["twitter client","twitter","waftter","kud"],
+  "window":{
+  	"transparent": true,
+  	"icon":"images/waftter_icon.png",
+  	"toolbar": false,
+  	"frame": false,
+  	"width": 500,
+  	"height": 800
+  }
+}
