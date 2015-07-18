@@ -13,21 +13,42 @@ var tw = [];
 
 settingFile = "setting.json";
 
-// 参考 http://qiita.com/emadurandal/items/37fae542938907ef5d0c
-Function.prototype.toJSON = Function.prototype.toString;
-var parser = function(k,v){return v.toString().indexOf('function') === 0 ? eval('('+v+')') : v};
-var obj = JSON.parse(fs.readFileSync(settingFile, 'utf8'),parser);
-
-function watch(event, filename) {
-	// ファイル内容が変わったイベントでないなら無視
-	if (event !== 'change') {
-		return;
-	}
-
-	fs.watch(settingFile, watch);
+function loadSettingFile(){
+	// 参考 http://qiita.com/emadurandal/items/37fae542938907ef5d0c
+	Function.prototype.toJSON = Function.prototype.toString;
+	var parser = function(k,v){return v.toString().indexOf('function') === 0 ? eval('('+v+')') : v};
+	return JSON.parse(fs.readFileSync(settingFile, 'utf8'),parser);
 }
 
-fs.watch(settingFile, watch);
+var obj = loadSettingFile();
+
+var watching = true;
+
+function watchSettingFile(event, filename) {
+	// ファイル内容が変わったイベントでないなら無視
+	if (event !== 'change' || !watching) {
+		return;
+	}
+	console.log("Setting file has been changed");
+
+	for(key in childwin){
+		childwin[key].close();
+	}
+	win.reload();
+
+	fs.watch(settingFile, watchSettingFile);
+}
+fs.watch(settingFile, watchSettingFile);
+
+function updateSettingFile(callback){
+	watching = false;
+	fs.writeFile(settingFile,JSON.stringify(obj,null,'  '),function(err){
+		if(err) console.log("Can't update setting file.")
+	});
+	watching = true;
+	fs.watch(settingFile, watchSettingFile);
+	callback();
+}
 
 //キュー
 //http://keicode.com/script/scr25.php

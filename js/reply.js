@@ -30,7 +30,7 @@ function putToMain(data){
 			if('media' in data.extended_entities){
 				for(i=0;i<data.extended_entities.media.length;i++){
 					text = text.replace(new RegExp(data.extended_entities.media[i].url,'g'),"<a href='#' style='color:#FFF;' onclick=\'gui.Shell.openExternal(\"" + data.extended_entities.media[i].expanded_url + "\");\'>" + data.extended_entities.media[i].display_url + "</a>");
-					mediaArea.append($('<div>').css({"width":(100/data.extended_entities.media.length) + "%","max-height":"175px","float":"left","overflow":"hidden","cursor":"pointer","transition":"background-color 0.05s linear 0"})
+					mediaImage.append($('<div>').css({"width":(100/data.extended_entities.media.length) + "%","max-height":"175px","float":"left","overflow":"hidden","cursor":"pointer","transition":"background-color 0.05s linear 0"})
 										   .attr("onclick","gui.Shell.openExternal('" + data.extended_entities.media[i].expanded_url + "');")
 										   .append($('<img>')
 										   .attr("src",data.extended_entities.media[i].media_url)

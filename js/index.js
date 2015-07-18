@@ -13,10 +13,12 @@ function pinTopThisColumn(obj){
 
 var countColumn = 0;
 var flowQueue = new Array();
+var tweetQueue = new Array();
 var columnWidth = 410;
 function addColumn(id,display){
 	isFlowing[id] = false;
 	flowQueue[id] = new Queue();
+	tweetQueue[id] = new Queue();
 	$("#columns").append(
 		$('<div>').attr("id",id).addClass("column" + countColumn).addClass("subwindow").css("left",countColumn*columnWidth + "px").append(
 			$('<div>').addClass("subwindowCaption").append(
@@ -210,6 +212,10 @@ function putToColumn(target,data,callback,account){
 			  .children("a")
 			  .css({"color":"#FFF","font-size":"small","float":"right"})
 			  .attr({"onclick":"gui.Shell.openExternal('" + $('#' + id).children(".bottomArea").children(".sourceArea").children("a").attr("href") + "');","href":"#"});
+			tweetQueue[target].enqueue(id);
+			if(tweetQueue[target].size() > 10){
+				$('#' + tweetQueue[target].dequeue()).remove();
+			}
 		} else {
 			if(data.event !== null){
 				$("#" + target).children(".tweets").prepend(
@@ -284,7 +290,9 @@ $(document).ready(function(){
 		for(key in childwin){
 			childwin[key].close();
 		}
-		win.close();
+		updateSettingFile(function(){
+			win.close()
+		});
 	});
 	$(".mainAccountUser").click(function(){
 		$('#settings').slideToggle("fast");
@@ -460,4 +468,7 @@ function columnMove(object,direction){
 		swap_object.removeClass('rightNothing');
 		current_object.addClass('rightNothing');
 	}
+	var temp = obj.column[current_number];
+	obj.column[current_number] = obj.column[swap_number];
+	obj.column[swap_number] = temp;
 }
