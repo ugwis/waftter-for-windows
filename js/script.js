@@ -11,7 +11,7 @@ process.on('uncaughtException', function(err) {
 
 var tw = [];
 
-settingFile = "../setting.json";
+settingFile = "setting.json";
 
 function loadSettingFile(){
 	// 参考 http://qiita.com/emadurandal/items/37fae542938907ef5d0c
