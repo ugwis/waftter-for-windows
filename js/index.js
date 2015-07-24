@@ -315,6 +315,7 @@ $(document).ready(function(){
 			access_token_secret: obj.account[key].token.access_token_secret
 		});
 		var sp = function(err,data){
+			if(err) console.log(err);
 			var ky = parseInt(this);
 			obj.account[ky].profile_image_url = data.profile_image_url;
 			if(ky == 0){
@@ -335,6 +336,10 @@ $(document).ready(function(){
 
 		notice('[notice] Get Home Timeline');
 		var ht = function(err,data){
+			if(err){
+				new Notification("Authorization Error");
+				return;
+			}
 			var ky = parseInt(this);
 			for(var j in obj.account[ky].next){
 				for(var k=data.length-1;k>=0;k--){

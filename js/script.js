@@ -4,10 +4,11 @@ win.showDevTools();
 var crypto = require('crypto');
 var twitter = require('ntwitter');
 var fs = require('fs');
+var OAuth = require('oauth').OAuth;
 var childwin = [];
-process.on('uncaughtException', function(err) {
-	new Notification(err);
-});
+//process.on('uncaughtException', function(err) {
+//	new Notification(err);
+//});
 
 var tw = [];
 
