@@ -4,10 +4,11 @@ win.showDevTools();
 var crypto = require('crypto');
 var twitter = require('ntwitter');
 var fs = require('fs');
+var OAuth = require('oauth').OAuth;
 var childwin = [];
-process.on('uncaughtException', function(err) {
-	new Notification(err);
-});
+//process.on('uncaughtException', function(err) {
+//	new Notification(err);
+//});
 
 var tw = [];
 
@@ -43,11 +44,10 @@ fs.watch(settingFile, watchSettingFile);
 function updateSettingFile(callback){
 	watching = false;
 	fs.writeFile(settingFile,JSON.stringify(obj,null,'  '),function(err){
-		if(err) console.log("Can't update setting file.")
+		if(err) console.log("Can't update setting file.");
+		watching = true;
+		callback();
 	});
-	watching = true;
-	fs.watch(settingFile, watchSettingFile);
-	callback();
 }
 
 //ÉLÉÖÅ[
