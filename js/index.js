@@ -290,8 +290,8 @@ $(document).ready(function(){
 		for(key in childwin){
 			childwin[key].close();
 		}
-		updateSettingFile(function(){
-			win.close()
+		updateSettingFile(false,function(){
+			win.close();
 		});
 	});
 	$(".mainAccountUser").click(function(){

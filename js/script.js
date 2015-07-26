@@ -44,11 +44,10 @@ fs.watch(settingFile, watchSettingFile);
 function updateSettingFile(callback){
 	watching = false;
 	fs.writeFile(settingFile,JSON.stringify(obj,null,'  '),function(err){
-		if(err) console.log("Can't update setting file.")
+		if(err) console.log("Can't update setting file.");
+		watching = true;
+		callback();
 	});
-	watching = true;
-	fs.watch(settingFile, watchSettingFile);
-	callback();
 }
 
 //ÉLÉÖÅ[
