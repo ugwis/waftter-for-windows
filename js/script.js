@@ -4,17 +4,18 @@ win.showDevTools();
 var crypto = require('crypto');
 var twitter = require('ntwitter');
 var fs = require('fs');
+var OAuth = require('oauth').OAuth;
 var childwin = [];
-process.on('uncaughtException', function(err) {
-	new Notification(err);
-});
+//process.on('uncaughtException', function(err) {
+//	new Notification(err);
+//});
 
 var tw = [];
 
-settingFile = "../setting.json";
+settingFile = "setting.json";
 
 function loadSettingFile(){
-	// å‚è€ƒ http://qiita.com/emadurandal/items/37fae542938907ef5d0c
+	// Ql http://qiita.com/emadurandal/items/37fae542938907ef5d0c
 	Function.prototype.toJSON = Function.prototype.toString;
 	var parser = function(k,v){return v.toString().indexOf('function') === 0 ? eval('('+v+')') : v};
 	return JSON.parse(fs.readFileSync(settingFile, 'utf8'),parser);
@@ -25,7 +26,7 @@ var obj = loadSettingFile();
 var watching = true;
 
 function watchSettingFile(event, filename) {
-	// ãƒ•ã‚¡ã‚¤ãƒ«å†…å®¹ãŒå¤‰ã‚ã£ãŸã‚¤ãƒ™ãƒ³ãƒˆã§ãªã„ãªã‚‰ç„¡è¦–
+	// ƒtƒ@ƒCƒ‹“à—e‚ª•Ï‚í‚Á‚½ƒCƒxƒ“ƒg‚Å‚È‚¢‚È‚ç–³‹
 	if (event !== 'change' || !watching) {
 		return;
 	}
@@ -43,14 +44,13 @@ fs.watch(settingFile, watchSettingFile);
 function updateSettingFile(callback){
 	watching = false;
 	fs.writeFile(settingFile,JSON.stringify(obj,null,'  '),function(err){
-		if(err) console.log("Can't update setting file.")
+		if(err) console.log("Can't update setting file.");
+		watching = true;
+		callback();
 	});
-	watching = true;
-	fs.watch(settingFile, watchSettingFile);
-	callback();
 }
 
-//ã‚­ãƒ¥ãƒ¼
+//ƒLƒ…[
 //http://keicode.com/script/scr25.php
 function Queue() {
 	this.__a = [];
@@ -76,7 +76,7 @@ Queue.prototype.toString = function() {
 };
 
 
-//æ–‡å­—ã®é•·ã•ã‚’è¿”ã™é–¢æ•°(ã‚µãƒ­ã‚²ãƒ¼ãƒˆãƒšã‚¢å¯¾å¿œ)
+//•¶š‚Ì’·‚³‚ğ•Ô‚·ŠÖ”(ƒTƒƒQ[ƒgƒyƒA‘Î‰)
 // http://teppeis.hatenablog.com/entry/2014/01/surrogate-pair-in-javascript
 function strlen(str) {
   return str.length - (str.match(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g)||[]).length;
