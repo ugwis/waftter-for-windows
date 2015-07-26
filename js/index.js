@@ -290,7 +290,7 @@ $(document).ready(function(){
 		for(key in childwin){
 			childwin[key].close();
 		}
-		updateSettingFile(false,function(){
+		updateSettingFile(function(){
 			win.close();
 		});
 	});
