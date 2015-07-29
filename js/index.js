@@ -339,7 +339,7 @@ function main(){
 		notice('[notice] Get Home Timeline');
 		var ht = function(err,data){
 			if(err){
-				new Notification("Authorization Error");
+		throw new Error("Authorization Error");
 				return;
 			}
 			var ky = parseInt(this);
@@ -397,7 +397,7 @@ function retweet(obj){
 	if(tweet_obj.hasClass('retweeted')){
 		tw[parseInt($('.mainAccountUser').attr("id"))].post('/statuses/destroy/' + id + '.json', null, null, function(err,dat){
 			if(err){
-				new Notification(err);
+				throw new Error(err);
 			} else {
 				tweet_obj.removeClass('retweeted').attr('id',dat.retweeted_status.id_str);
 			}
@@ -405,7 +405,7 @@ function retweet(obj){
 	} else {
 		tw[parseInt($('.mainAccountUser').attr("id"))].post('/statuses/retweet/' + id + '.json', null, null, function(err,dat){
 			if(err){
-				new Notification(err);
+				throw new Error(err);
 			} else {
 				tweet_obj.addClass('retweeted').attr('id',dat.id_str);
 				notice("retweeted")
@@ -422,7 +422,7 @@ function favorite(obj){
 	if(tweet_obj.hasClass('favorited')){
 		tw[parseInt($('.mainAccountUser').attr("id"))].post('/favorites/destroy.json', {id: id}, null, function(err,dat){
 			if(err){
-				new Notification(err);
+				throw new Error(err);
 			} else {
 				tweet_obj.removeClass('favorited');
 			}
@@ -430,7 +430,7 @@ function favorite(obj){
 	} else {
 		tw[parseInt($('.mainAccountUser').attr("id"))].post('/favorites/create.json', {id: id}, null, function(err,dat){
 			if(err){
-				new Notification(err);
+				throw new Error(err);
 			} else {
 				tweet_obj.addClass('favorited');
 			}
