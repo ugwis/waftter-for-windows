@@ -210,8 +210,9 @@ fs.exists(settingFile,function(exist){
 			}
 		};
 		updateSettingFile(function(){
-			fs.watch(settingFile, watchSettingFile);
-			add_account(function(){},[{
+			add_account(function(){
+				win.reload();
+			},[{
 				"type": "column",
 				"number": 0
 			}]);

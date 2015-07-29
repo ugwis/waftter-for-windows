@@ -72,7 +72,7 @@ function putToMain(data){
 	win.resizeTo(500,$('#targetTweet').height() + $('#tweetText').height() + 76);
 }
 
-$(document).ready(function(){
+function main(){
 	account = $.url(location.href).param('account');
 	tweet_id = $.url(location.href).param('tweet_id');
 	if(account == "") account = "0";
@@ -167,7 +167,7 @@ $(document).ready(function(){
 		}
 	});
 	$("#tweetText").focus();
-});
+}
 
 win.on('maximize',function(){
 	win.setResizable(false);
