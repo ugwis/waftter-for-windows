@@ -1,6 +1,4 @@
-
-
-$(document).ready(function(){
+function main(){
 	win.on('focus',function(){
 		$("body").css("background-color","#007acc");
 	});
@@ -25,4 +23,4 @@ $(document).ready(function(){
 		//stream.close();
 		win.close();
 	});
-});
+}
