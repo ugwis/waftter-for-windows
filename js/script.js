@@ -10,6 +10,9 @@ var childwin = [];
 //	new Notification(err);
 //});
 
+var default_consumer_key = "5PBw3HtLbKXoAvF47Rtw";
+var default_consumer_secret = "2XwVyMe58FvJwGr2bgH19xuE02aeeXiwcRqZVjSo6A";
+
 var tw = [];
 
 settingFile = "setting.json";
@@ -21,7 +24,7 @@ function loadSettingFile(){
 	return JSON.parse(fs.readFileSync(settingFile, 'utf8'),parser);
 }
 
-var obj = loadSettingFile();
+var obj;
 
 var watching = true;
 
@@ -39,7 +42,6 @@ function watchSettingFile(event, filename) {
 
 	fs.watch(settingFile, watchSettingFile);
 }
-fs.watch(settingFile, watchSettingFile);
 
 function updateSettingFile(callback){
 	watching = false;
@@ -109,3 +111,110 @@ function changeAccount(number){
 		$(".mainAccountUser").attr("id",number);
 	}
 }
+
+
+var auth_window;
+
+function add_account(callback,next){
+	if(callback === undefined) callback = function(){};
+	if(next === undefined) next = [];
+	var oa = new OAuth(
+		"https://api.twitter.com/oauth/request_token",
+		"https://api.twitter.com/oauth/access_token",
+		obj.option.consumer_key,
+		obj.option.consumer_secret,
+		"1.0",
+		"http://auth.waftter.jp/auth/entry.cgi",
+		"HMAC-SHA1"
+	);
+	oa.getOAuthRequestToken(function(error, oauth_token, oauth_token_secret, results){
+		if (error) {
+			alert(error);
+			return;
+		} else {
+			auth_window = gui.Window.open('https://twitter.com/oauth/authenticate?oauth_token='+oauth_token,{
+				'transparent': false,
+				"icon":"images/waftter_icon.png",
+				'toolbar': false,
+				'frame': true,
+				'width': 500,
+				'height': 400
+			});
+			auth_window.on('closed',function(){
+				$.getJSON("http://auth.waftter.jp/auth/auth.cgi",{oauth_token:oauth_token},function(data){
+					console.log(data);
+					console.log(oauth_token_secret);
+					oa.getOAuthAccessToken(
+						data.oauth_token,
+						oauth_token_secret,
+						data.oauth_verifier,
+						function(error,oauth_access_token,oauth_access_token_secret,result){
+							if(error){
+								new Notification(error);
+								return;
+							}
+							var twitveri = new twitter({
+								consumer_key: obj.option.consumer_key,
+								consumer_secret: obj.option.consumer_secret,
+								access_token_key: oauth_access_token,
+								access_token_secret: oauth_access_token_secret
+							});
+							twitveri.verifyCredentials(function(err,data){
+								if(err){
+									new Notification(err);
+									return;
+								}
+								console.log(data);
+								obj.account.push({
+									"token":{
+										"consumer_key": obj.option.consumer_key,
+										"consumer_secret":obj.option.consumer_secret,
+										"access_token_key":oauth_access_token,
+										"access_token_secret":oauth_access_token_secret
+									},
+									"screen_name":data.screen_name,
+									"profile_image_url":data.profile_image_url,
+									"next":next
+								});
+								updateSettingFile(function(){
+									fs.watch(settingFile, watchSettingFile);
+									callback();
+								});
+							});
+						}
+					);
+				});
+			});
+		}
+	});
+}
+
+
+fs.exists(settingFile,function(exist){
+	if(exist){
+		obj = loadSettingFile();
+		fs.watch(settingFile, watchSettingFile);
+		main();
+	} else {
+		obj = {
+			"account":[],
+			"worker":[],
+			"column":[
+				{
+					"display": "Timeline",
+					"id": "timeline"
+				}],
+			"option":{
+				"consumer_key":default_consumer_key,
+				"consumer_secret":default_consumer_secret
+			}
+		};
+		updateSettingFile(function(){
+			fs.watch(settingFile, watchSettingFile);
+			add_account(function(){},[{
+				"type": "column",
+				"number": 0
+			}]);
+		});
+	}
+});
