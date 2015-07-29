@@ -266,7 +266,7 @@ function clickTweet(object){
 	}
 }
 
-$(document).ready(function(){
+function main(){
 	win.on('focus',function(){
 		$("body").css("background-color","#007acc");
 	});
@@ -299,7 +299,9 @@ $(document).ready(function(){
 	});
 	$('#settings').click(function(){
 		$('#settings').slideToggle("fast");
-	})
+	});
+
+	if(obj === undefined) return;
 
 	for(var key in obj.column){
 		addColumn(obj.column[key].id,obj.column[key].display);
@@ -364,7 +366,7 @@ $(document).ready(function(){
 			})
 		});
 	}
-});
+};
 
 win.on('maximize',function(){
 	win.setResizable(false);
