@@ -7,7 +7,7 @@ var fs = require('fs');
 var OAuth = require('oauth').OAuth;
 var childwin = [];
 //process.on('uncaughtException', function(err) {
-//	new Notification(err);
+//	throw new Error(err);
 //});
 
 var default_consumer_key = "5PBw3HtLbKXoAvF47Rtw";
@@ -150,7 +150,7 @@ function add_account(callback,next){
 						data.oauth_verifier,
 						function(error,oauth_access_token,oauth_access_token_secret,result){
 							if(error){
-								new Notification(error);
+								throw new Error(error);
 								return;
 							}
 							var twitveri = new twitter({
@@ -161,7 +161,7 @@ function add_account(callback,next){
 							});
 							twitveri.verifyCredentials(function(err,data){
 								if(err){
-									new Notification(err);
+									throw new Error(err);
 									return;
 								}
 								console.log(data);

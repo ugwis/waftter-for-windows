@@ -154,6 +154,7 @@ function putToColumn(target,data,callback,account){
 				sourceArea = data.retweeted_status.source;
 				retweetedBy = $("<p>").css("margin","0px").append("Retweeted by <a href='#' style='color:#FFF;' onclick='gui.Shell.openExternal(\"http://twitter.com/" + data.user.screen_name + "\");'>" + data.user.screen_name + "</a>").css("font-size","small");
 				entities = data.retweeted_status.entities;
+				date = new Date(data.retweeted_status.created_at);
 			} else {
 				profile_image_url = data.user.profile_image_url;
 				user_name = data.user.name;
@@ -162,6 +163,7 @@ function putToColumn(target,data,callback,account){
 				sourceArea = data.source;
 				retweetedBy = "";
 				entities = data.entities;
+				date = new Date(data.created_at);
 			}
 			if('urls' in entities){
 				for(i=0;i<entities.urls.length;i++){
@@ -195,6 +197,7 @@ function putToColumn(target,data,callback,account){
 						$("<span>").addClass("username").append(user_name),
 						$("<a>").attr({"href":"#","onclick":"gui.Shell.openExternal('http://twitter.com/" + screen_name + "');"})
 								.css("color","#888").append($("<span>").addClass("screenname").append("@" + screen_name)),
+						$("<a>").attr({"href":"#","onclick":"gui.Shell.openExternal('https://twitter.com/tanakh/status/" + data.id_str + ");"}).addClass('date').append(date.getHours() + ":" + date.getMinutes()),
 						$("<p>").addClass("text").append(text)
 					).attr('onclick','clickTweet($(this).parent());'),
 					mediaArea,
@@ -339,7 +342,7 @@ function main(){
 		notice('[notice] Get Home Timeline');
 		var ht = function(err,data){
 			if(err){
-				new Notification("Authorization Error");
+		throw new Error("Authorization Error");
 				return;
 			}
 			var ky = parseInt(this);
@@ -397,7 +400,7 @@ function retweet(obj){
 	if(tweet_obj.hasClass('retweeted')){
 		tw[parseInt($('.mainAccountUser').attr("id"))].post('/statuses/destroy/' + id + '.json', null, null, function(err,dat){
 			if(err){
-				new Notification(err);
+				throw new Error(err);
 			} else {
 				tweet_obj.removeClass('retweeted').attr('id',dat.retweeted_status.id_str);
 			}
@@ -405,7 +408,7 @@ function retweet(obj){
 	} else {
 		tw[parseInt($('.mainAccountUser').attr("id"))].post('/statuses/retweet/' + id + '.json', null, null, function(err,dat){
 			if(err){
-				new Notification(err);
+				throw new Error(err);
 			} else {
 				tweet_obj.addClass('retweeted').attr('id',dat.id_str);
 				notice("retweeted")
@@ -422,7 +425,7 @@ function favorite(obj){
 	if(tweet_obj.hasClass('favorited')){
 		tw[parseInt($('.mainAccountUser').attr("id"))].post('/favorites/destroy.json', {id: id}, null, function(err,dat){
 			if(err){
-				new Notification(err);
+				throw new Error(err);
 			} else {
 				tweet_obj.removeClass('favorited');
 			}
@@ -430,7 +433,7 @@ function favorite(obj){
 	} else {
 		tw[parseInt($('.mainAccountUser').attr("id"))].post('/favorites/create.json', {id: id}, null, function(err,dat){
 			if(err){
-				new Notification(err);
+				throw new Error(err);
 			} else {
 				tweet_obj.addClass('favorited');
 			}
