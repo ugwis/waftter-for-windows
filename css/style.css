@@ -167,6 +167,12 @@ body {
 
    color: #888;
 }
+.tweet .date {
+   font-size:medium;
+   float:right;
+   height:1em;
+   color:#888;
+}
 .tweet .text {
    font-size: small;
 
