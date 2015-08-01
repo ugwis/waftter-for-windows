@@ -197,7 +197,7 @@ function putToColumn(target,data,callback,account){
 						$("<span>").addClass("username").append(user_name),
 						$("<a>").attr({"href":"#","onclick":"gui.Shell.openExternal('http://twitter.com/" + screen_name + "');"})
 								.css("color","#888").append($("<span>").addClass("screenname").append("@" + screen_name)),
-						$("<a>").attr({"href":"#","onclick":"gui.Shell.openExternal('https://twitter.com/tanakh/status/" + data.id_str + ");"}).addClass('date').append(date.getHours() + ":" + date.getMinutes()),
+						$("<a>").attr({"href":"#","onclick":"gui.Shell.openExternal('https://twitter.com/" + screen_name + "/status/" + data.id_str + "');"}).addClass('date').append(date.getHours() + ":" + date.getMinutes()),
 						$("<p>").addClass("text").append(text)
 					).attr('onclick','clickTweet($(this).parent());'),
 					mediaArea,
