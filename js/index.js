@@ -339,10 +339,10 @@ function main(){
 		}
 		tw[key].verifyCredentials(sp.bind(key))
 
-		notice('[notice] Get Home Timeline');
+		notice('[notice] Getting Home Timeline');
 		var ht = function(err,data){
 			if(err){
-		throw new Error("Authorization Error");
+				throw new Error("Authorization Error");
 				return;
 			}
 			var ky = parseInt(this);
@@ -354,7 +354,7 @@ function main(){
 		}
 		tw[key].getHomeTimeline(ht.bind(key));
 		console.log(tw[key]);
-		notice('[notice] connect Streaming API');
+		notice('[notice] Connecting Streaming API');
 		tw[key].stream('user',  function(stream) {
 			var st = function(data) {
 				var k = parseInt(this);
@@ -481,4 +481,27 @@ function columnMove(object,direction){
 	var temp = obj.column[current_number];
 	obj.column[current_number] = obj.column[swap_number];
 	obj.column[swap_number] = temp;
+	for(key in obj.account){
+		for(ley in obj.account[key].next){
+			if(obj.account[key].next[ley].type == "column"){
+				if(obj.account[key].next[ley].number == current_number){
+					console.log("a");
+					obj.account[key].next[ley].number == swap_number;
+				}else if(obj.account[key].next[ley].number == swap_number){
+					obj.account[key].next[ley].number == current_number;
+				}
+			}
+		}
+	}
+	for(key in obj.worker){
+		for(ley in obj.worker[key].next){
+			if(obj.worker[key].next[ley].type == "column"){
+				if(obj.worker[key].next[ley].number == current_number){
+					obj.worker[key].next[ley].number == swap_number;
+				}else if(obj.worker[key].next[ley].number == swap_number){
+					obj.worker[key].next[ley].number == current_number;
+				}
+			}
+		}
+	}
 }
