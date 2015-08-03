@@ -165,6 +165,15 @@ function putToColumn(target,data,callback,account){
 				entities = data.entities;
 				date = new Date(data.created_at);
 			}
+			if(date.getMonth() == new Date().getMonth() && date.getDate() == new Date().getDate()){
+				if(date.getMinutes() < 10){
+					tweet_date = date.getHours() + ":0" + date.getMinutes();
+				} else {
+					tweet_date = date.getHours() + ":" + date.getMinutes();
+				}
+			} else {
+				tweet_date = (date.getMonth()+1) + "/" + date.getDate();
+			}
 			if('urls' in entities){
 				for(i=0;i<entities.urls.length;i++){
 					text = text.replace(new RegExp(entities.urls[i].url,'g'),"<a href='#' style='color:#FFF;' onclick=\'gui.Shell.openExternal(\"" + entities.urls[i].expanded_url + "\");\'>" + entities.urls[i].display_url + "</a>");
@@ -197,7 +206,7 @@ function putToColumn(target,data,callback,account){
 						$("<span>").addClass("username").append(user_name),
 						$("<a>").attr({"href":"#","onclick":"gui.Shell.openExternal('http://twitter.com/" + screen_name + "');"})
 								.css("color","#888").append($("<span>").addClass("screenname").append("@" + screen_name)),
-						$("<a>").attr({"href":"#","onclick":"gui.Shell.openExternal('https://twitter.com/" + screen_name + "/status/" + data.id_str + "');"}).addClass('date').append(date.getHours() + ":" + date.getMinutes()),
+						$("<a>").attr({"href":"#","onclick":"gui.Shell.openExternal('https://twitter.com/" + screen_name + "/status/" + data.id_str + "');"}).addClass('date').append(tweet_date),
 						$("<p>").addClass("text").append(text)
 					).attr('onclick','clickTweet($(this).parent());'),
 					mediaArea,
@@ -268,6 +277,8 @@ function clickTweet(object){
 		changeAccount(parseInt(key[1]));
 	}
 }
+
+var destroy_stream = [];
 
 function main(){
 	win.on('focus',function(){
@@ -356,6 +367,7 @@ function main(){
 		console.log(tw[key]);
 		notice('[notice] Connecting Streaming API');
 		tw[key].stream('user',  function(stream) {
+			destroy_stream[key] = stream;
 			var st = function(data) {
 				var k = parseInt(this);
 				//putToColumn('timeline',data);
@@ -485,10 +497,9 @@ function columnMove(object,direction){
 		for(ley in obj.account[key].next){
 			if(obj.account[key].next[ley].type == "column"){
 				if(obj.account[key].next[ley].number == current_number){
-					console.log("a");
-					obj.account[key].next[ley].number == swap_number;
-				}else if(obj.account[key].next[ley].number == swap_number){
-					obj.account[key].next[ley].number == current_number;
+					obj.account[key].next[ley].number = swap_number;
+				} else if(obj.account[key].next[ley].number == swap_number){
+					obj.account[key].next[ley].number = current_number;
 				}
 			}
 		}
@@ -498,7 +509,7 @@ function columnMove(object,direction){
 			if(obj.worker[key].next[ley].type == "column"){
 				if(obj.worker[key].next[ley].number == current_number){
 					obj.worker[key].next[ley].number == swap_number;
-				}else if(obj.worker[key].next[ley].number == swap_number){
+				} else if(obj.worker[key].next[ley].number == swap_number){
 					obj.worker[key].next[ley].number == current_number;
 				}
 			}
