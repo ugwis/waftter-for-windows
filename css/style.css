@@ -409,3 +409,20 @@ body {
 .leftNothing .subwindowCaption .moveToLeft {
    display: none!important;
 }
+
+#graphs {
+   background: #000;
+}
+
+#control {
+   background:url('../images/back_trans.png');
+}
+
+#controlpanes {
+}
+
+.controlpane {
+   margin:0px auto;
+   width:800px;
+   height:100%;
+}
