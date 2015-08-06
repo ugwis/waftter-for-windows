@@ -419,10 +419,13 @@ body {
 }
 
 #controlpanes {
+   height:100%;
 }
 
 .controlpane {
    margin:0px auto;
    width:800px;
    height:100%;
+   font-size:20px;
+   padding:10px;
 }
