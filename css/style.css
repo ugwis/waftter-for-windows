@@ -411,21 +411,31 @@ body {
 }
 
 #graphs {
-   background: #000;
+   background: #181818;
+   width:100%;
+   height:50%;
 }
 
 #control {
    background:url('../images/back_trans.png');
+   width:100%;
+   height:50%;
+   overflow:hidden;
 }
 
-#controlpanes {
+.controlpanes {
    height:100%;
+   width: 900px;
+   margin:0px auto;
+}
+
+.controlpanes_inner {
+   width: 3600px;
+   position:relative;
 }
 
 .controlpane {
-   margin:0px auto;
-   width:800px;
+   width:900px;
    height:100%;
-   font-size:20px;
-   padding:10px;
+   float:left;
 }
