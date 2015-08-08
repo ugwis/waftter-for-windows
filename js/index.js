@@ -12,8 +12,8 @@ function pinTopThisColumn(obj){
 }
 
 var countColumn = 0;
-var flowQueue = new Array();
-var tweetQueue = new Array();
+var flowQueue = [];
+var tweetQueue = [];
 var columnWidth = 410;
 function addColumn(id,display){
 	isFlowing[id] = false;
@@ -42,8 +42,8 @@ function addColumn(id,display){
 			$('<div>').addClass('tweets')
 		)
 	);
-	if(countColumn == 0){
-		$('.column' + countColumn).addClass('leftNothing')
+	if(countColumn === 0){
+		$('.column' + countColumn).addClass('leftNothing');
 	} else {
 		$('.column' + (countColumn-1)).removeClass('rightNothing');
 	}
@@ -75,7 +75,7 @@ function removeColumn(object){
 		if(number == countColumn){
 			$(".column" + (number)).addClass("rightNothing");
 		} else {
-			if(number == 0){
+			if(number === 0){
 				$(".column" + (number+1)).addClass("leftNothing");
 			}
 			for(var i=number+1;i<=countColumn;i++){
@@ -111,11 +111,11 @@ function flow(type,number,data,account){
 	return 0;
 }
 
-var isFlowing = new Object();
+var isFlowing = {};
 function flowInterval(target){
 	console.log("flowInterval");
 	notice("[debug] flowQueue[" + target + "] remain:" + flowQueue[target].size());
-	if(flowQueue[target].size() != 0){
+	if(flowQueue[target].size() !== 0){
 		isFlowing[target] = true;
 		i = flowQueue[target].dequeue();
 		console.log(i[2]);
@@ -131,7 +131,7 @@ function startFlow(target){
 }
 
 function putToColumn(target,data,callback,account){
-	if(callback == undefined) callback = function(object){};
+	if(callback === undefined) callback = function(object){};
 	//$('#tweets').prepend("<P>"+JSON.stringify(data,null, "    ")+"</P><hr>");
 	if($("#" + target).children(".subwindowCaption").children(".pinTop").hasClass("pinning")){
 		if($("#" + target).children(".noticebar").hasClass("pinning")){
@@ -144,9 +144,8 @@ function putToColumn(target,data,callback,account){
 		}
 		flowQueue[target].enqueue([target,data,account]);
 	} else {
-		console.log(data);
-		if(data.text != null){
-			if(data.retweeted_status != null){
+		if(data.text !== undefined){
+			if(data.retweeted_status !== undefined){
 				profile_image_url = data.retweeted_status.user.profile_image_url;
 				user_name = data.retweeted_status.user.name;
 				screen_name = data.retweeted_status.user.screen_name;
@@ -179,7 +178,7 @@ function putToColumn(target,data,callback,account){
 					text = text.replace(new RegExp(entities.urls[i].url,'g'),"<a href='#' style='color:#FFF;' onclick=\'gui.Shell.openExternal(\"" + entities.urls[i].expanded_url + "\");\'>" + entities.urls[i].display_url + "</a>");
 				}
 			}
-			mediaArea = $('<div>').addClass('mediaArea')
+			mediaArea = $('<div>').addClass('mediaArea');
 			if('extended_entities' in data){
 				if('media' in data.extended_entities){
 					for(i=0;i<data.extended_entities.media.length;i++){
@@ -229,7 +228,8 @@ function putToColumn(target,data,callback,account){
 				$('#' + tweetQueue[target].dequeue()).remove();
 			}
 		} else {
-			if(data.event !== null){
+			console.log("data.event:" + data.event);
+			if(data.event !== undefined){
 				$("#" + target).children(".tweets").prepend(
 					$('<div>').addClass("notice").prepend(
 						$("<p>").addClass("text").append(data.event)
@@ -287,6 +287,12 @@ function main(){
 	win.on('blur',function(){
 		$("body").css("background-color","#5a5a5a");
 	});
+	win.on('maximize',function(){
+		win.setResizable(false);
+	});
+	win.on('unmaximize',function(){
+		win.setResizable(true);
+	});
 	var isMaximum=false;
 	$("#minimize").click(function(){
 		win.minimize();
@@ -301,7 +307,7 @@ function main(){
 	});
 	$("#exit").click(function(){
 		//stream.close();
-		for(key in childwin){
+		for(var key in childwin){
 			childwin[key].close();
 		}
 		updateSettingFile(function(){
@@ -314,9 +320,7 @@ function main(){
 	$('#settings').click(function(){
 		$('#settings').slideToggle("fast");
 	});
-
 	if(obj === undefined) return;
-
 	for(var key in obj.column){
 		addColumn(obj.column[key].id,obj.column[key].display);
 	}
@@ -331,10 +335,13 @@ function main(){
 			access_token_secret: obj.account[key].token.access_token_secret
 		});
 		var sp = function(err,data){
-			if(err) console.log(err);
+			if(err) {
+				throw new Error("Coundn't get verify");
+				return ;
+			}
 			var ky = parseInt(this);
 			obj.account[ky].profile_image_url = data.profile_image_url;
-			if(ky == 0){
+			if(ky === 0){
 				$('.mainAccountUser').append(
 					$('<span>').css({"float":"left","font-size":"12px","margin-right":"5px"}).append(obj.account[ky].screen_name),
 					$('<img>').css({"float":"right","width":"35px","height":"35px"}).attr("src",obj.account[ky].profile_image_url)
@@ -348,9 +355,9 @@ function main(){
 				);
 			}
 		}
-		tw[key].verifyCredentials(sp.bind(key))
-
+		tw[key].verifyCredentials(sp.bind(key));
 		notice('[notice] Getting Home Timeline');
+		stat.totalTweets = 0;
 		var ht = function(err,data){
 			if(err){
 				throw new Error("Authorization Error");
@@ -360,12 +367,16 @@ function main(){
 			for(var j in obj.account[ky].next){
 				for(var k=data.length-1;k>=0;k--){
 					flow(obj.account[ky].next[j].type,obj.account[ky].next[j].number,data[k],ky);
+					stat.totalTweets++;
 				}
 			}
+			updateSettingFile();
 		}
 		tw[key].getHomeTimeline(ht.bind(key));
 		console.log(tw[key]);
 		notice('[notice] Connecting Streaming API');
+		stat.beginStreaming = parseInt(new Date/60000);
+		updateStatusFile();
 		tw[key].stream('user',  function(stream) {
 			destroy_stream[key] = stream;
 			var st = function(data) {
@@ -373,25 +384,20 @@ function main(){
 				//putToColumn('timeline',data);
 				for(var j in obj.account[k].next){
 					flow(obj.account[k].next[j].type,obj.account[k].next[j].number,data,k);
+					stat.totalTweets++;
+					updateStatusFile();
 				}
 			}
 			stream.on('data', st.bind(key));
 			stream.on('error', function(err,data) {
 				console.log(data);
-			})
+			});
 		});
 	}
-};
-
-win.on('maximize',function(){
-	win.setResizable(false);
-});
-win.on('unmaximize',function(){
-	win.setResizable(true);
-});
+}
 
 function reply(obj){
-	tweet_obj = obj.parent().parent().parent()
+	tweet_obj = obj.parent().parent().parent();
 	id = tweet_obj.attr("id");
 	id = id.replace(tweet_obj.parent().parent().attr("id") + "_","");
 	childwin.push(gui.Window.open('reply.html?account=' + $('.mainAccountUser').attr("id") + '&tweet_id=' + id,{
@@ -405,7 +411,7 @@ function reply(obj){
 }
 
 function retweet(obj){
-	tweet_obj = obj.parent().parent().parent()
+	tweet_obj = obj.parent().parent().parent();
 	id = tweet_obj.attr("id");
 	id = id.replace(tweet_obj.parent().parent().attr("id") + "_","");
 
@@ -423,14 +429,14 @@ function retweet(obj){
 				throw new Error(err);
 			} else {
 				tweet_obj.addClass('retweeted').attr('id',dat.id_str);
-				notice("retweeted")
+				notice("retweeted");
 			}
 		});
 	}
 }
 
 function favorite(obj){
-	tweet_obj = obj.parent().parent().parent()
+	tweet_obj = obj.parent().parent().parent();
 	id = tweet_obj.attr("id");
 	id = id.replace(tweet_obj.parent().parent().attr("id") + "_","");
 
@@ -474,7 +480,7 @@ function columnMove(object,direction){
 	swap_object.css('left',current_number*columnWidth + "px");
 	current_object.addClass('column' + swap_number).removeClass('column' + current_number);
 	swap_object.addClass('column' + current_number).removeClass('column' + swap_number);
-	if(current_number == 0){
+	if(current_number === 0){
 		current_object.removeClass('leftNothing');
 		swap_object.addClass('leftNothing');
 	}
@@ -482,7 +488,7 @@ function columnMove(object,direction){
 		current_object.removeClass('rightNothing');
 		swap_object.addClass('rightNothing');
 	}
-	if(swap_number == 0){
+	if(swap_number === 0){
 		swap_object.removeClass('leftNothing');
 		current_object.addClass('leftNothing');
 	}
@@ -493,8 +499,8 @@ function columnMove(object,direction){
 	var temp = obj.column[current_number];
 	obj.column[current_number] = obj.column[swap_number];
 	obj.column[swap_number] = temp;
-	for(key in obj.account){
-		for(ley in obj.account[key].next){
+	for(var key in obj.account){
+		for(var ley in obj.account[key].next){
 			if(obj.account[key].next[ley].type == "column"){
 				if(obj.account[key].next[ley].number == current_number){
 					obj.account[key].next[ley].number = swap_number;
@@ -504,8 +510,8 @@ function columnMove(object,direction){
 			}
 		}
 	}
-	for(key in obj.worker){
-		for(ley in obj.worker[key].next){
+	for(var key in obj.worker){
+		for(var ley in obj.worker[key].next){
 			if(obj.worker[key].next[ley].type == "column"){
 				if(obj.worker[key].next[ley].number == current_number){
 					obj.worker[key].next[ley].number == swap_number;

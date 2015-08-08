@@ -1,27 +1,61 @@
 var gui = require('nw.gui');
 var win = gui.Window.get();
-//win.showDevTools();
+win.showDevTools();
 var crypto = require('crypto');
 var twitter = require('ntwitter');
 var fs = require('fs');
 var OAuth = require('oauth').OAuth;
 var childwin = [];
-//process.on('uncaughtException', function(err) {
-//	throw new Error(err);
-//});
-
+process.on('uncaughtException', function(err) {
+	alert(err);
+	throw new Error(err);
+});
 var default_consumer_key = "5PBw3HtLbKXoAvF47Rtw";
 var default_consumer_secret = "2XwVyMe58FvJwGr2bgH19xuE02aeeXiwcRqZVjSo6A";
+
+statusFile = "status.json";
+
+function loadStatusFile(){
+	return JSON.parse(fs.readFileSync(statusFile, 'utf8'));
+}
+
+function updateStatusFile(callback){
+	if(callback === undefined) callback = function(){};
+	fs.writeFile(statusFile,JSON.stringify(stat,null,'  '),function(err){
+		if(err) console.log("Can't update status file.");
+		callback();
+	});
+}
+
+function watchStatusFile(event, filename) {
+	if(typeof(this) != "function") return;
+	// ファイル内容が変わったイベントでないなら無視
+	if (event !== 'change' || !watching) {
+		return;
+	}
+	console.log("Setting file has been changed");
+
+	for(key in childwin){
+		childwin[key].close();
+	}
+
+	this();
+
+	fs.watch(statusFile, watchStatusFile.bind(this));
+}
+
 
 var tw = [];
 
 settingFile = "setting.json";
 
-function loadSettingFile(){
+function loadSettingFile(callback){
+	if(callback === undefined) callback = function(){};
 	// 参考 http://qiita.com/emadurandal/items/37fae542938907ef5d0c
 	Function.prototype.toJSON = Function.prototype.toString;
 	var parser = function(k,v){return v.toString().indexOf('function') === 0 ? eval('('+v+')') : v};
-	return JSON.parse(fs.readFileSync(settingFile, 'utf8'),parser);
+	obj = JSON.parse(fs.readFileSync(settingFile, 'utf8'),parser);
+	callback();
 }
 
 var obj;
@@ -44,6 +78,7 @@ function watchSettingFile(event, filename) {
 }
 
 function updateSettingFile(callback){
+	if(callback === undefined) callback = function(){};
 	watching = false;
 	fs.writeFile(settingFile,JSON.stringify(obj,null,'  '),function(err){
 		if(err) console.log("Can't update setting file.");
@@ -190,32 +225,44 @@ function add_account(callback,next){
 }
 
 
-fs.exists(settingFile,function(exist){
-	if(exist){
-		obj = loadSettingFile();
-		fs.watch(settingFile, watchSettingFile);
-		main();
-	} else {
-		obj = {
-			"account":[],
-			"worker":[],
-			"column":[
-				{
-					"display": "Timeline",
-					"id": "timeline"
-				}],
-			"option":{
-				"consumer_key":default_consumer_key,
-				"consumer_secret":default_consumer_secret
-			}
-		};
-		updateSettingFile(function(){
-			add_account(function(){
-				win.reload();
-			},[{
-				"type": "column",
-				"number": 0
-			}]);
-		});
-	}
+fs.exists(settingFile,function(existSettingFile){
+	fs.exists(statusFile,function(exist){
+		if(exist){
+			stat = loadStatusFile();
+		} else {
+			stat = {
+				"beginStreaming": 0,
+				"totalTweets": 0,
+				"processTime": 0
+			};
+		}
+		if(existSettingFile){
+			loadSettingFile(function(){
+				fs.watch(settingFile, watchSettingFile);
+				main();
+			});
+		} else {
+			obj = {
+				"account":[],
+				"worker":[],
+				"column":[
+					{
+						"display": "Timeline",
+						"id": "timeline"
+					}],
+				"option":{
+					"consumer_key":default_consumer_key,
+					"consumer_secret":default_consumer_secret
+				}
+			};
+			updateSettingFile(function(){
+				add_account(function(){
+					win.reload();
+				},[{
+					"type": "column",
+					"number": 0
+				}]);
+			});
+		}
+	});
 });
