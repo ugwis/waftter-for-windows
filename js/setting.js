@@ -76,5 +76,8 @@ function main(){
 		}
 	});
 	$('#mct').val(status["max tweet"]).trigger('change');
-
+	$('#tpm').val(stat.totalTweets/(parseInt((new Date)/60000) - stat.beginStreaming)).trigger('change');
+	fs.watch(statusFile, watchStatusFile.bind(function(){
+		$('#tpm').val(stat.totalTweets/(parseInt((new Date)/60000) - stat.beginStreaming)).trigger('change');
+	}));
 }
