@@ -19,7 +19,7 @@ function main(){
 			win.setResizable(false);
 		}
 		isMaximum=!isMaximum;
-	})
+	});
 	$("#exit").click(function(){
 		//stream.close();
 		win.close();
@@ -39,8 +39,8 @@ function main(){
 
 	for(var key in obj.account){
 		tw[key] = new twitter({
-		  consumer_key: obj.option.consumer_key,
-		  consumer_secret: obj.option.consumer_secret,
+		  consumer_key: obj.account[key].consumer_key,
+		  consumer_secret: obj.account[key].consumer_secret,
 		  access_token_key: obj.account[key].token.access_token_key,
 		  access_token_secret: obj.account[key].token.access_token_secret
 		});
@@ -68,7 +68,8 @@ function main(){
 				{status: value},
 				function(err,dat){
 					win.close();
-				});
+				}
+			);
 		}
 	});
 }

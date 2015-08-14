@@ -6,10 +6,10 @@ var twitter = require('ntwitter');
 var fs = require('fs');
 var OAuth = require('oauth').OAuth;
 var childwin = [];
-process.on('uncaughtException', function(err) {
+/*process.on('uncaughtException', function(err,a) {
 	alert(err);
 	throw new Error(err);
-});
+});*/
 var default_consumer_key = "5PBw3HtLbKXoAvF47Rtw";
 var default_consumer_secret = "2XwVyMe58FvJwGr2bgH19xuE02aeeXiwcRqZVjSo6A";
 
@@ -178,7 +178,6 @@ function add_account(callback,next){
 			auth_window.on('closed',function(){
 				$.getJSON("http://auth.waftter.jp/auth/auth.cgi",{oauth_token:oauth_token},function(data){
 					console.log(data);
-					console.log(oauth_token_secret);
 					oa.getOAuthAccessToken(
 						data.oauth_token,
 						oauth_token_secret,
@@ -226,7 +225,9 @@ function add_account(callback,next){
 
 
 fs.exists(settingFile,function(existSettingFile){
+	console.log("setting file exist:" + existSettingFile);
 	fs.exists(statusFile,function(exist){
+		console.log("status file exist:" + exist);
 		if(exist){
 			stat = loadStatusFile();
 		} else {
@@ -249,7 +250,8 @@ fs.exists(settingFile,function(existSettingFile){
 					{
 						"display": "Timeline",
 						"id": "timeline"
-					}],
+					}
+				],
 				"option":{
 					"consumer_key":default_consumer_key,
 					"consumer_secret":default_consumer_secret

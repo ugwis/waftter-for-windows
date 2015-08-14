@@ -370,7 +370,7 @@ function main(){
 					stat.totalTweets++;
 				}
 			}
-			updateSettingFile();
+			updateStatusFile();
 		}
 		tw[key].getHomeTimeline(ht.bind(key));
 		console.log(tw[key]);
