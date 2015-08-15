@@ -459,10 +459,6 @@ function favorite(obj){
 	}
 }
 
-function notice(text){
-	$('.bottomText').empty().append($("<p>").append(text));
-}
-
 function columnMove(object,direction){
 	var current_object = object.parent().parent();
 	var swap_object;
