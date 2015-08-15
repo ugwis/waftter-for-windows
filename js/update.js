@@ -76,8 +76,6 @@ function main(){
 	account = $.url(location.href).param('account');
 	tweet_id = $.url(location.href).param('tweet_id');
 	if(account == "") account = "0";
-	alert("account:" + account);
-	alert("tweet_id" + tweet_id);
 	win.on('focus',function(){
 		$("body").css("background-color","#007acc");
 	});
