@@ -76,7 +76,8 @@ function main(){
 	account = $.url(location.href).param('account');
 	tweet_id = $.url(location.href).param('tweet_id');
 	if(account == "") account = "0";
-	console.log("account:" + account);
+	alert("account:" + account);
+	alert("tweet_id" + tweet_id);
 	win.on('focus',function(){
 		$("body").css("background-color","#007acc");
 	});
@@ -135,8 +136,9 @@ function main(){
 			);
 		}
 	}
-	if(account != "" && tweet_id != ""){
+	if(tweet_id != ""){
 		$(".mainAccountUser").attr("id",parseInt(account));
+		console.log(tw[parseInt(account)]);
 		tw[parseInt(account)].get('/statuses/show.json',{id:tweet_id},function(err,dat){
 			console.log(err);
 			console.log(dat);
@@ -150,8 +152,10 @@ function main(){
 			value = $("#tweetText").val();
 			$("#tweetText").val("");
 			account = parseInt($('.mainAccountUser').attr('id'));
+			if(tweet_id != "") post_properties = {status: value,in_reply_to_status_id:tweet_id};
+			else post_properties = {status:value};
 			tw[account].post("/statuses/update.json",
-				{status: value,in_reply_to_status_id:tweet_id},
+				post_properties,
 				function(err,dat){
 					if(err){
 						$('#tweetText').val(value);
