@@ -400,7 +400,7 @@ function reply(obj){
 	tweet_obj = obj.parent().parent().parent();
 	id = tweet_obj.attr("id");
 	id = id.replace(tweet_obj.parent().parent().attr("id") + "_","");
-	childwin.push(gui.Window.open('reply.html?account=' + $('.mainAccountUser').attr("id") + '&tweet_id=' + id,{
+	childwin.push(gui.Window.open('update.html?account=' + $('.mainAccountUser').attr("id") + '&tweet_id=' + id,{
 		'transparent': true,
 	  	"icon":"images/waftter_icon.png",
 		'toolbar': false,
