@@ -83,6 +83,12 @@ function main(){
 	win.on('blur',function(){
 		$("body").css("background-color","#5a5a5a");
 	});
+	win.on('maximize',function(){
+		win.setResizable(false);
+	});
+	win.on('unmaximize',function(){
+		win.setResizable(true);
+	});
 	var isMaximum=false;
 	$("#minimize").click(function(){
 		win.minimize();
@@ -140,6 +146,7 @@ function main(){
 	}
 	$("#tweetText").keydown(function(e){
 		if(e.keyCode == 13 && e.shiftKey == true){
+			$(".updating").addClass("updating_show");
 			value = $("#tweetText").val();
 			$("#tweetText").val("");
 			account = parseInt($('.mainAccountUser').attr('id'));
@@ -147,8 +154,8 @@ function main(){
 				{status: value,in_reply_to_status_id:tweet_id},
 				function(err,dat){
 					if(err){
-						$("#tweetText").val(value);
-						alert(err);
+						$('#tweetText').val(value);
+						$(".updating").removeClass("updating_show");
 					} else {
 						win.close();
 					}
@@ -159,9 +166,3 @@ function main(){
 	$("#tweetText").focus();
 }
 
-win.on('maximize',function(){
-	win.setResizable(false);
-});
-win.on('unmaximize',function(){
-	win.setResizable(true);
-});
