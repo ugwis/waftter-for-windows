@@ -1,6 +1,6 @@
 var gui = require('nw.gui');
 var win = gui.Window.get();
-//win.showDevTools();
+win.showDevTools();
 var crypto = require('crypto');
 var twitter = require('ntwitter');
 var fs = require('fs');
@@ -132,6 +132,10 @@ function avoid(str){
 	return str;
 }
 
+function notice(text){
+	$('.bottomText').empty().append($("<p>").append(text));
+}
+
 function changeAccount(number){
 	current = parseInt($('.mainAccountUser').attr('id'));
 	if(current != number){
@@ -223,48 +227,49 @@ function add_account(callback,next){
 	});
 }
 
-
-fs.exists(settingFile,function(existSettingFile){
-	console.log("setting file exist:" + existSettingFile);
-	fs.exists(statusFile,function(exist){
-		console.log("status file exist:" + exist);
-		if(exist){
-			stat = loadStatusFile();
-		} else {
-			stat = {
-				"beginStreaming": 0,
-				"totalTweets": 0,
-				"processTime": 0
-			};
-		}
-		if(existSettingFile){
-			loadSettingFile(function(){
-				fs.watch(settingFile, watchSettingFile);
-				main();
-			});
-		} else {
-			obj = {
-				"account":[],
-				"worker":[],
-				"column":[
-					{
-						"display": "Timeline",
-						"id": "timeline"
+$(document).ready(function(){
+	fs.exists(settingFile,function(existSettingFile){
+		console.log("setting file exist:" + existSettingFile);
+		fs.exists(statusFile,function(exist){
+			console.log("status file exist:" + exist);
+			if(exist){
+				stat = loadStatusFile();
+			} else {
+				stat = {
+					"beginStreaming": 0,
+					"totalTweets": 0,
+					"processTime": 0
+				};
+			}
+			if(existSettingFile){
+				loadSettingFile(function(){
+					fs.watch(settingFile, watchSettingFile);
+					main();
+				});
+			} else {
+				obj = {
+					"account":[],
+					"worker":[],
+					"column":[
+						{
+							"display": "Timeline",
+							"id": "timeline"
+						}
+					],
+					"option":{
+						"consumer_key":default_consumer_key,
+						"consumer_secret":default_consumer_secret
 					}
-				],
-				"option":{
-					"consumer_key":default_consumer_key,
-					"consumer_secret":default_consumer_secret
-				}
-			};
-			updateSettingFile(function(){
-				add_account(function(){
-					win.reload();
-				},[{
-					"type": "column",
-					"number": 0
-				}]);
-			});
-		}
+				};
+				updateSettingFile(function(){
+					add_account(function(){
+						win.reload();
+					},[{
+						"type": "column",
+						"number": 0
+					}]);
+				});
+			}
+		});
 	});
 });

@@ -76,8 +76,6 @@ function main(){
 	account = $.url(location.href).param('account');
 	tweet_id = $.url(location.href).param('tweet_id');
 	if(account == "") account = "0";
-	alert("account:" + account);
-	alert("tweet_id" + tweet_id);
 	win.on('focus',function(){
 		$("body").css("background-color","#007acc");
 	});
@@ -136,7 +134,7 @@ function main(){
 			);
 		}
 	}
-	if(tweet_id != ""){
+	if(tweet_id !== undefined){
 		$(".mainAccountUser").attr("id",parseInt(account));
 		console.log(tw[parseInt(account)]);
 		tw[parseInt(account)].get('/statuses/show.json',{id:tweet_id},function(err,dat){
@@ -148,7 +146,9 @@ function main(){
 	}
 	$("#tweetText").keydown(function(e){
 		if(e.keyCode == 13 && e.shiftKey == true){
+			$("body").css("background-color","#FFAA00");
 			$(".updating").addClass("updating_show");
+			notice("[notice] updating tweet...");
 			value = $("#tweetText").val();
 			$("#tweetText").val("");
 			account = parseInt($('.mainAccountUser').attr('id'));
@@ -158,8 +158,13 @@ function main(){
 				post_properties,
 				function(err,dat){
 					if(err){
+						$("body").css("background-color","#FF3333");
+						notice("[error]Couldn't post tweet because " + JSON.parse(err.data).errors[0].message);
 						$('#tweetText').val(value);
 						$(".updating").removeClass("updating_show");
+						setTimeout(function(){
+							$("body").css("background-color","#007acc");
+						},3000)
 					} else {
 						win.close();
 					}
