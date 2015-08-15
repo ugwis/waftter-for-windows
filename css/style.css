@@ -439,3 +439,26 @@ body {
    height:100%;
    float:left;
 }
+
+.updating {
+   position:fixed;
+   top: 0px;
+   left: 0px;
+   background:#FFF;
+   opacity: 0.0;
+   width: 100%;
+   height: 100%;
+   display:none;
+}
+
+.updating_show {
+   display: block!important;
+   opacity: 0.5!important;
+}
+
+.updating_image{
+   position:absolute;
+   top:50%;
+   left:50%;
+   margin:-9px -110px;
+}

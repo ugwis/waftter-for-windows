@@ -6,6 +6,12 @@ function main(){
 	win.on('blur',function(){
 		$("body").css("background-color","#5a5a5a");
 	});
+	win.on('maximize',function(){
+		win.setResizable(false);
+	});
+	win.on('unmaximize',function(){
+		win.setResizable(true);
+	});
 	var isMaximum=false;
 	$("#minimize").click(function(){
 		win.minimize();
@@ -39,35 +45,41 @@ function main(){
 
 	for(var key in obj.account){
 		tw[key] = new twitter({
-		  consumer_key: obj.account[key].consumer_key,
-		  consumer_secret: obj.account[key].consumer_secret,
+		  consumer_key: obj.account[key].token.consumer_key,
+		  consumer_secret: obj.account[key].token.consumer_secret,
 		  access_token_key: obj.account[key].token.access_token_key,
 		  access_token_secret: obj.account[key].token.access_token_secret
 		});
 		var ky = parseInt(key);
-		if(ky == 0){
+		if(key == 0){
 			$('.mainAccountUser').append(
-				$('<span>').css({"float":"left","font-size":"12px","margin-right":"5px"}).append(obj.account[ky].screen_name),
-				$('<img>').css({"float":"right","width":"35px","height":"35px"}).attr("src",obj.account[ky].profile_image_url)
-			).attr('id',ky);
+				$('<span>').css({"float":"left","font-size":"12px","margin-right":"5px"}).append(obj.account[key].screen_name),
+				$('<img>').css({"float":"right","width":"35px","height":"35px"}).attr("src",obj.account[key].profile_image_url)
+			).attr('id',key);
 		} else {
 			$('#settings').prepend(
 				$('<li>').addClass("button2").css({"padding-top":"3px"}).attr("onclick","changeAccount(parseInt($(this).attr('id')));").append(
-					$('<span>').css({"float":"left","font-size":"12px","margin-right":"5px"}).append(obj.account[ky].screen_name),
-					$('<img>').css({"float":"right","width":"35px","height":"35px"}).attr("src",obj.account[ky].profile_image_url)
-				).attr('id',ky)
+					$('<span>').css({"float":"left","font-size":"12px","margin-right":"5px"}).append(obj.account[key].screen_name),
+					$('<img>').css({"float":"right","width":"35px","height":"35px"}).attr("src",obj.account[key].profile_image_url)
+				).attr('id',key)
 			);
 		}
 	}
 	$("#tweetText").keydown(function(e){
 		account = parseInt($('.mainAccountUser').attr('id'));
 		if(e.keyCode == 13 && e.shiftKey == true){
+			$(".updating").addClass("updating_show");
 			value = $("#tweetText").val();
 			$("#tweetText").val("");
 			tw[account].post("/statuses/update.json",
 				{status: value},
 				function(err,dat){
-					win.close();
+					if(err){
+						$('#tweetText').val(value);
+						$(".updating").removeClass("updating_show");
+					} else {
+						win.close();
+					}
 				}
 			);
 		}
