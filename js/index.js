@@ -11,6 +11,8 @@ function pinTopThisColumn(obj){
 	}
 }
 
+var latestTweetBeginningFlowingTime;
+
 var countColumn = 0;
 var flowQueue = [];
 var tweetQueue = [];
@@ -133,6 +135,9 @@ function startFlow(target){
 function putToColumn(target,data,callback,account){
 	if(callback === undefined) callback = function(object){};
 	//$('#tweets').prepend("<P>"+JSON.stringify(data,null, "    ")+"</P><hr>");
+	console.log(latestTweetBeginningFlowingTime)
+	stat.processTime = parseInt(new Date/1) - latestTweetBeginningFlowingTime;
+	updateStatusFile();
 	if($("#" + target).children(".subwindowCaption").children(".pinTop").hasClass("pinning")){
 		if($("#" + target).children(".noticebar").hasClass("pinning")){
 		} else {
@@ -370,7 +375,6 @@ function main(){
 					stat.totalTweets++;
 				}
 			}
-			updateStatusFile();
 		}
 		tw[key].getHomeTimeline(ht.bind(key));
 		console.log(tw[key]);
@@ -380,6 +384,7 @@ function main(){
 		tw[key].stream('user',  function(stream) {
 			destroy_stream[key] = stream;
 			var st = function(data) {
+				latestTweetBeginningFlowingTime = parseInt(new Date/1);
 				var k = parseInt(this);
 				//putToColumn('timeline',data);
 				for(var j in obj.account[k].next){

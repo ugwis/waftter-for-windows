@@ -1,30 +1,31 @@
 var gui = require('nw.gui');
 var win = gui.Window.get();
-win.showDevTools();
+//win.showDevTools();
 var crypto = require('crypto');
 var twitter = require('ntwitter');
 var fs = require('fs');
 var OAuth = require('oauth').OAuth;
 var childwin = [];
-/*process.on('uncaughtException', function(err,a) {
+process.on('uncaughtException', function(err,a) {
 	alert(err);
 	throw new Error(err);
-});*/
+});
 var default_consumer_key = "5PBw3HtLbKXoAvF47Rtw";
 var default_consumer_secret = "2XwVyMe58FvJwGr2bgH19xuE02aeeXiwcRqZVjSo6A";
 
 statusFile = "status.json";
+var stat;
 
 function loadStatusFile(){
+	console.log("loadStatusFile");
 	return JSON.parse(fs.readFileSync(statusFile, 'utf8'));
 }
 
 function updateStatusFile(callback){
+	console.log("updateStatusFile");
 	if(callback === undefined) callback = function(){};
-	fs.writeFile(statusFile,JSON.stringify(stat,null,'  '),function(err){
-		if(err) console.log("Can't update status file.");
-		callback();
-	});
+	fs.writeFileSync(statusFile,JSON.stringify(stat,null,'  '));
+	callback();
 }
 
 function watchStatusFile(event, filename) {
@@ -33,15 +34,12 @@ function watchStatusFile(event, filename) {
 	if (event !== 'change' || !watching) {
 		return;
 	}
-	console.log("Setting file has been changed");
-
-	for(key in childwin){
-		childwin[key].close();
-	}
+	console.log("Status file has been changed");
+	console.log(this);
 
 	this();
 
-	fs.watch(statusFile, watchStatusFile.bind(this));
+//	fs.watch(statusFile, watchStatusFile.bind(this));
 }
 
 
@@ -74,7 +72,7 @@ function watchSettingFile(event, filename) {
 	}
 	win.reload();
 
-	fs.watch(settingFile, watchSettingFile);
+	//fs.watch(settingFile, watchSettingFile);
 }
 
 function updateSettingFile(callback){
@@ -82,6 +80,7 @@ function updateSettingFile(callback){
 	watching = false;
 	fs.writeFile(settingFile,JSON.stringify(obj,null,'  '),function(err){
 		if(err) console.log("Can't update setting file.");
+		console.log("updateSettingFile");
 		watching = true;
 		callback();
 	});
