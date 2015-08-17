@@ -1,4 +1,14 @@
 
+
+current = 0;
+function painFocus(number){
+	if(number == current) return;
+	$("#pane" + current).removeClass("paneActive");
+	$("#pane" + number).addClass("paneActive");
+	$(".controlpanes_inner").css({left:(-900*number) + "px"});
+	current = number;
+}
+
 function main(){
 	win.on('focus',function(){
 		$("body").css("background-color","#007acc");
@@ -78,6 +88,8 @@ function main(){
 	$('#mct').val(status["max tweet"]).trigger('change');
 	$('#tpm').val(stat.totalTweets/(parseInt((new Date)/60000) - stat.beginStreaming)).trigger('change');
 	fs.watch(statusFile, watchStatusFile.bind(function(){
+		stat = loadStatusFile();
 		$('#tpm').val(stat.totalTweets/(parseInt((new Date)/60000) - stat.beginStreaming)).trigger('change');
+		$('#ltc').val(stat.processTime).trigger('change');
 	}));
 }
