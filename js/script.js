@@ -87,7 +87,7 @@ function updateSettingFile(callback){
 }
 
 //ÉLÉÖÅ[
-//http://keicode.com/script/scr25.php
+// http://keicode.com/script/scr25.php
 function Queue() {
 	this.__a = [];
 }
@@ -227,6 +227,7 @@ function add_account(callback,next){
 }
 
 $(document).ready(function(){
+
 	fs.exists(settingFile,function(existSettingFile){
 		console.log("setting file exist:" + existSettingFile);
 		fs.exists(statusFile,function(exist){
