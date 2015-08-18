@@ -72,16 +72,21 @@ function putToMain(data){
 	win.resizeTo(500,$('#targetTweet').height() + $('#tweetText').height() + 76);
 }
 
-$(document).ready(function(){
+function main(){
 	account = $.url(location.href).param('account');
 	tweet_id = $.url(location.href).param('tweet_id');
 	if(account == "") account = "0";
-	console.log("account:" + account);
 	win.on('focus',function(){
 		$("body").css("background-color","#007acc");
 	});
 	win.on('blur',function(){
 		$("body").css("background-color","#5a5a5a");
+	});
+	win.on('maximize',function(){
+		win.setResizable(false);
+	});
+	win.on('unmaximize',function(){
+		win.setResizable(true);
 	});
 	var isMaximum=false;
 	$("#minimize").click(function(){
@@ -114,27 +119,24 @@ $(document).ready(function(){
 			access_token_key: obj.account[key].token.access_token_key,
 			access_token_secret: obj.account[key].token.access_token_secret
 		});
-		var sp = function(err,dat){
-			var ky = parseInt(this);
-			obj.account[ky].profile_image_url = dat.profile_image_url;
-			if(ky == parseInt(account)){
-				$('.mainAccountUser').append(
+		var ky = parseInt(key);
+		if(ky == parseInt(account)){
+			$('.mainAccountUser').append(
+				$('<span>').css({"float":"left","font-size":"12px","margin-right":"5px"}).append(obj.account[ky].screen_name),
+				$('<img>').css({"float":"right","width":"35px","height":"35px"}).attr("src",obj.account[ky].profile_image_url)
+			).attr('id',ky);
+		} else {
+			$('#settings').prepend(
+				$('<li>').addClass("button2").css({"padding-top":"3px"}).attr("onclick","changeAccount(parseInt($(this).attr('id')));").append(
 					$('<span>').css({"float":"left","font-size":"12px","margin-right":"5px"}).append(obj.account[ky].screen_name),
 					$('<img>').css({"float":"right","width":"35px","height":"35px"}).attr("src",obj.account[ky].profile_image_url)
-				).attr('id',ky);
-			} else {
-				$('#settings').prepend(
-					$('<li>').addClass("button2").css({"padding-top":"3px"}).attr("onclick","changeAccount(parseInt($(this).attr('id')));").append(
-						$('<span>').css({"float":"left","font-size":"12px","margin-right":"5px"}).append(obj.account[ky].screen_name),
-						$('<img>').css({"float":"right","width":"35px","height":"35px"}).attr("src",obj.account[ky].profile_image_url)
-					).attr('id',ky)
-				);
-			}
+				).attr('id',ky)
+			);
 		}
-		tw[key].verifyCredentials(sp.bind(key));
 	}
-	if(account != "" && tweet_id != ""){
+	if(tweet_id !== undefined){
 		$(".mainAccountUser").attr("id",parseInt(account));
+		console.log(tw[parseInt(account)]);
 		tw[parseInt(account)].get('/statuses/show.json',{id:tweet_id},function(err,dat){
 			console.log(err);
 			console.log(dat);
@@ -144,21 +146,25 @@ $(document).ready(function(){
 	}
 	$("#tweetText").keydown(function(e){
 		if(e.keyCode == 13 && e.shiftKey == true){
+			$("body").css("background-color","#FFAA00");
+			$(".updating").addClass("updating_show");
+			notice("[notice] updating tweet...");
 			value = $("#tweetText").val();
 			$("#tweetText").val("");
 			account = parseInt($('.mainAccountUser').attr('id'));
-			var tw = new twitter({
-				consumer_key: obj.account[account].token.consumer_key,
-				consumer_secret: obj.account[account].token.consumer_secret,
-				access_token_key: obj.account[account].token.access_token_key,
-				access_token_secret: obj.account[account].token.access_token_secret
-			});
-			tw.post("/statuses/update.json",
-				{status: value,in_reply_to_status_id:tweet_id},
+			if(tweet_id != "") post_properties = {status: value,in_reply_to_status_id:tweet_id};
+			else post_properties = {status:value};
+			tw[account].post("/statuses/update.json",
+				post_properties,
 				function(err,dat){
 					if(err){
-						$("#tweetText").val(value);
-						alert(err);
+						$("body").css("background-color","#FF3333");
+						notice("[error]Couldn't post tweet because " + JSON.parse(err.data).errors[0].message);
+						$('#tweetText').val(value);
+						$(".updating").removeClass("updating_show");
+						setTimeout(function(){
+							$("body").css("background-color","#007acc");
+						},3000)
 					} else {
 						win.close();
 					}
@@ -167,11 +173,5 @@ $(document).ready(function(){
 		}
 	});
 	$("#tweetText").focus();
-});
+}
 
-win.on('maximize',function(){
-	win.setResizable(false);
-});
-win.on('unmaximize',function(){
-	win.setResizable(true);
-});
