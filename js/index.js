@@ -235,11 +235,22 @@ function putToColumn(target,data,callback,account){
 		} else {
 			console.log("data.event:" + data.event);
 			if(data.event !== undefined){
-				$("#" + target).children(".tweets").prepend(
-					$('<div>').addClass("notice").prepend(
-						$("<p>").addClass("text").append(data.event)
-					)
-				);
+				if(data.event == "favorite"){
+					t = "favorited_" + target + "_" + data.target_object.id_str;
+					if(!$("#" + t).length != 0){
+						$("#" + target).children(".tweets").prepend(
+							$('<div>').attr('id',t).addClass("notice").prepend(
+								$("<p>").addClass("text")
+										.append("favorited @" + data.target.screen_name + ":\"" + data.target_object.text + "\"")
+							)
+						);
+					}
+					$("#" + t).append(
+						$("<img>").attr("src",data.source.profile_image_url)
+					);
+				}
+			} else {
+				console.log(data);
 			}
 			callback(target);
 		}
@@ -320,10 +331,24 @@ function main(){
 		});
 	});
 	$(".mainAccountUser").click(function(){
+		if($('#settings').css("display") == "none"){
+			$('.protector').addClass('protect');
+		} else {
+			$('.protector').removeClass('protect');
+		}
 		$('#settings').slideToggle("fast");
 	});
 	$('#settings').click(function(){
+		if($('#settings').css("display") == "none"){
+			$('.protector').addClass('protect');
+		} else {
+			$('.protector').removeClass('protect');
+		}
 		$('#settings').slideToggle("fast");
+	});
+	$('.protector').click(function(){
+		$('#settings').slideToggle("fast");
+		$('.protector').removeClass('protect');
 	});
 	if(obj === undefined) return;
 	for(var key in obj.column){
