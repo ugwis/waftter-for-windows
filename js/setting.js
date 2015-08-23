@@ -92,4 +92,65 @@ function main(){
 		$('#tpm').val(stat.totalTweets/(parseInt((new Date)/60000) - stat.beginStreaming)).trigger('change');
 		$('#ltc').val(stat.processTime).trigger('change');
 	}));
+	for(var key in obj.column){
+		additionalCircle("column",obj.column[key].id,obj.column[key].display);
+	}
+	for(var key in obj.worker){
+		additionalCircle("worker",obj.worker[key].id,obj.worker[key].display);
+	}
+	for(var key in obj.account){
+		additionalCircle("account",obj.account[key].screen_name,obj.account[key].profile_image_url);
+	}
+}
+
+function additionalCircle(type,id,option){
+	color = "";
+	if(type == "account"){
+		color = "#FF0047"
+		html = $('<img/>').attr("src",option);
+		focus_number = 1;
+	}
+	if(type == "worker"){
+		color = "#EBFF00"
+		html = $('<p/>').html(option);
+		focus_number = 2;
+	}
+	if(type == "column"){
+		color = "#00B8FF"
+		html = $('<p/>').html(option);
+		focus_number = 3;
+	}
+	$('#graphs').append(
+		$('<div/>').css({
+			left:Math.random()*($('#graphs').width()-77),
+			top:Math.random()*277,position:'absolute'
+		}).attr('onclick','circleFocus("' + type + '","' + id + '");')
+		  .attr('id',"circle_" + type + "_" + id)
+		  .css("color",color)
+		  .addClass('circle')
+		  .addClass('node_click_enable')
+		  .addClass('unselectable').append(
+			html
+		).draggable({
+			containment: '#graphs',
+			scroll: false ,
+			drag: function(e,ui){
+				//
+			}
+		}).fadeIn('fast')
+	);
+	if(type!="account"){
+		var p = $("#circle_" + type + "_" + id).children("p");
+		p.css("margin-top",-(p.height()/2));
+	}
+
+}
+
+function circleFocus(type,id){
+	$(".circle_focused").removeClass('circle_focused');
+	if(type == "none") painFocus(0);
+	if(type == "account") painFocus(1);
+	if(type == "worker") painFocus(2);
+	if(type == "column") painFocus(3);
+	$("#circle_" + type + "_" + id).addClass('circle_focused');
 }
