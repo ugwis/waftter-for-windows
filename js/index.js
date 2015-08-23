@@ -1,4 +1,5 @@
 
+//鍵マークを押したときに呼ばれるメソッド(objはロックする対象のカラムのjQueryオブジェクト)
 function pinTopThisColumn(obj){
 	if(obj.hasClass('pinning')){
 		obj.removeClass('pinning');
@@ -11,12 +12,15 @@ function pinTopThisColumn(obj){
 	}
 }
 
+//settingsのlatestProcessTime取得のための変数
 var latestTweetBeginningFlowingTime;
 
 var countColumn = 0;
 var flowQueue = [];
 var tweetQueue = [];
 var columnWidth = 410;
+
+//新しいカラムを追加するときに使うメソッド
 function addColumn(id,display){
 	isFlowing[id] = false;
 	flowQueue[id] = new Queue();
@@ -68,6 +72,7 @@ function addColumn(id,display){
 	countColumn++;
 }
 
+//カラムを削除するときに使うメソッド(カラムの右上をクリックすると呼び出される)
 function removeColumn(object){
 	var columns = $("#columns").children(".subwindow");
 	var number = parseInt((object.attr('class')).match(/column(\d)/i)[1]);
@@ -88,6 +93,7 @@ function removeColumn(object){
 	});
 }
 
+//サークルからサークルへ流す
 function flow(type,number,data,account){
 	if(type == "account"){
 		throw new Error("Type 'account' haven't input stream");
@@ -127,11 +133,16 @@ function flowInterval(target){
 	}
 }
 
+//カラムにロックかけているときに、これ呼び出すと溜めていたものを流してくれる(targetはカラムのDOMid)
 function startFlow(target){
 	$("#" + target).children(".noticebar").removeClass("pinning").empty().attr("onclick","").css("cursor","default");
 	flowInterval(target);
 }
 
+//カラムにツイートを流すときに使う
+// target...対象のカラムのDOMid
+// data...Twitterから得られるJSONデータ
+// account...アカウント番号(0~)を指定
 function putToColumn(target,data,callback,account){
 	if(callback === undefined) callback = function(object){};
 	//$('#tweets').prepend("<P>"+JSON.stringify(data,null, "    ")+"</P><hr>");
@@ -257,6 +268,7 @@ function putToColumn(target,data,callback,account){
 	}
 }
 
+//ツイートクリックしたときに下にコントロールバー出したりするためのメソッド(objectはツイートのjQueryオブジェクト)
 function clickTweet(object){
 	column_object = object.parent().parent();
 	if(object.hasClass('clickingTweet')){
@@ -296,6 +308,7 @@ function clickTweet(object){
 
 var destroy_stream = [];
 
+//設定ファイルとか読み込んだ後に呼び出されるメソッド
 function main(){
 	win.on('focus',function(){
 		$("body").css("background-color","#007acc");
@@ -489,6 +502,7 @@ function favorite(obj){
 	}
 }
 
+//カラムを移動するときに使うメソッド(objectは移動するカラムのjQueryオブジェクト、directionは移動したい方向を'right'か'left'指定)
 function columnMove(object,direction){
 	var current_object = object.parent().parent();
 	var swap_object;
