@@ -213,10 +213,7 @@ function add_account(callback,next){
 									"profile_image_url":data.profile_image_url,
 									"next":next
 								});
-								updateSettingFile(function(){
-									fs.watch(settingFile, watchSettingFile);
-									callback();
-								});
+								callback(data);
 							});
 						}
 					);
@@ -263,7 +260,9 @@ $(document).ready(function(){
 				};
 				updateSettingFile(function(){
 					add_account(function(){
-						win.reload();
+						updateSettingFile(function(){
+							watchSettingFile('change',settingFile);
+						});
 					},[{
 						"type": "column",
 						"number": 0

@@ -6,6 +6,7 @@
 	<link rel="stylesheet" href="./css/quicksand.css">
 	<meta charset="UTF-8">
 	<script src="./js/jquery-2.1.3.min.js"></script>
+	<script src="./js/jquery-ui.min.js"></script>
 	<script src="./js/script.js"></script>
 	<script src="./js/setting.js"></script>
 	<script src="./js/jquery.knob.js"></script>
@@ -15,10 +16,12 @@
 		<img src="./images/waftter_logo.png">
 		<div id="main" style="overflow:hidden;background: url('./images/settings_background.jpg');background-size: cover;position:absolute;">
 			<div id="graphs">
+				<div id="without_circle" onclick="circleFocus('none');"></div>
+				<canvas id=""></canvas>
 				<div style="display:block;position:absolute;top:50%;color:#FFF;line-height:50px;margin:-75px 0 0 15px;width:100px;">
-					<p style="margin:0px;" onclick="">+ Account</p>
-					<p style="margin:0px;" onclick="">+ Worker</p>
-					<p style="margin:0px;">+ Column</p>
+					<p class="add_circle_text" onclick="add_account(function(data){additionalCircle('account',data.profile_image_url);});">+ Account</p>
+					<p class="add_circle_text" onclick="additionalCircle('worker');">+ Worker</p>
+					<p class="add_circle_text" onclick="additionalCircle('column');">+ Column</p>
 				</div>
 			</div>
 			<div id="control">
