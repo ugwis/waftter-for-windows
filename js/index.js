@@ -102,7 +102,9 @@ function flow(type,number,data,account){
 		var ret = obj.worker[number].function(data,ac_data);
 		for(var key in ret){
 			if(key != "trash"){
-				flow(obj.worker[number].next[key].type,obj.worker[number].next[key].number,ret[key],account);
+				for(var ley in obj.worker[number].next[key]){
+					flow(obj.worker[number].next[key][ley].type,obj.worker[number].next[key][ley].number,ret[key],account);
+				}
 			}
 		}
 	} else if(type == "column"){
@@ -146,7 +148,7 @@ function startFlow(target){
 function putToColumn(target,data,callback,account){
 	if(callback === undefined) callback = function(object){};
 	//$('#tweets').prepend("<P>"+JSON.stringify(data,null, "    ")+"</P><hr>");
-	console.log(latestTweetBeginningFlowingTime)
+	//console.log(latestTweetBeginningFlowingTime)
 	stat.processTime = parseInt(new Date/1) - latestTweetBeginningFlowingTime;
 	updateStatusFile();
 	if($("#" + target).children(".subwindowCaption").children(".pinTop").hasClass("pinning")){
