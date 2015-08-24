@@ -9,6 +9,55 @@ function painFocus(number){
 	current = number;
 }
 
+function getCircleID(type,number){
+	if(type=="account") return "circle_account_" + obj.account[number].screen_name;
+	if(type=="worker") return "circle_worker_" + obj.worker[number].id;
+	if(type=="column") return "circle_column_" + obj.column[number].id;
+}
+
+function connectPoints(ctx,a,b){
+	ax = parseInt($("#" + a).css("left")) + parseInt($("#" + a).width())/2;
+	ay = parseInt($("#" + a).css("top")) + parseInt($("#" + a).height())/2;
+	bx = parseInt($("#" + b).css("left")) + parseInt($("#" + b).width())/2;
+	by = parseInt($("#" + b).css("top")) + parseInt($("#" + b).height())/2;
+	ctx.beginPath();
+	ctx.moveTo(ax, ay);
+	ctx.lineTo(bx, by);
+	ctx.closePath();
+	ctx.stroke();
+}
+
+function refreshEdges(){
+	var canvas = document.getElementById('canvas');
+	if ( ! canvas || ! canvas.getContext ) {
+		return false;
+	}
+	canvas.width = $('#graphs').width();
+	canvas.height = $('#graphs').height();
+	var ctx = canvas.getContext('2d');
+	ctx.strokeStyle = 'rgb(255,255,255)';
+	ctx.fillStyle = 'rgb(255,255,255)';
+	for(var key in obj.account){
+		for(var ley in obj.account[key].next){
+			a = getCircleID("account",key);
+			b = getCircleID(obj.account[key].next[ley].type,obj.account[key].next[ley].number);
+			connectPoints(ctx,a,b);
+		}
+	}
+	for(var key in obj.worker){
+		for(var ley in obj.worker[key].next){
+			if(ley == "trash") continue;
+			console.log(obj.worker[key].next[ley])
+			for(var mey in obj.worker[key].next[ley]){
+				a = getCircleID("worker",key);
+				b = getCircleID(obj.worker[key].next[ley][mey].type,obj.worker[key].next[ley][mey].number);
+				console.log(b);
+				connectPoints(ctx,a,b);
+			}
+		}
+	}
+}
+
 function main(){
 	win.on('focus',function(){
 		$("body").css("background-color","#007acc");
@@ -101,6 +150,7 @@ function main(){
 	for(var key in obj.account){
 		additionalCircle("account",obj.account[key].screen_name,obj.account[key].profile_image_url);
 	}
+	refreshEdges();
 }
 
 function additionalCircle(type,id,option){
@@ -123,7 +173,8 @@ function additionalCircle(type,id,option){
 	$('#graphs').append(
 		$('<div/>').css({
 			left:Math.random()*($('#graphs').width()-77),
-			top:Math.random()*277,position:'absolute'
+			top:Math.random()*($('#graphs').height()-77),
+			position:'absolute'
 		}).attr('onclick','circleFocus("' + type + '","' + id + '");')
 		  .attr('id',"circle_" + type + "_" + id)
 		  .css("color",color)
@@ -135,7 +186,7 @@ function additionalCircle(type,id,option){
 			containment: '#graphs',
 			scroll: false ,
 			drag: function(e,ui){
-				//
+				refreshEdges();
 			}
 		}).fadeIn('fast')
 	);
