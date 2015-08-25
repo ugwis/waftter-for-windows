@@ -149,7 +149,7 @@ function putToColumn(target,data,callback,account){
 	if(callback === undefined) callback = function(object){};
 	//$('#tweets').prepend("<P>"+JSON.stringify(data,null, "    ")+"</P><hr>");
 	//console.log(latestTweetBeginningFlowingTime)
-	stat.processTime = parseInt(new Date/1) - latestTweetBeginningFlowingTime;
+	stat.processTime = Math.max(stat.processTime,parseInt(new Date/1) - latestTweetBeginningFlowingTime);
 	updateStatusFile();
 	if($("#" + target).children(".subwindowCaption").children(".pinTop").hasClass("pinning")){
 		if($("#" + target).children(".noticebar").hasClass("pinning")){
@@ -425,6 +425,7 @@ function main(){
 			destroy_stream[key] = stream;
 			var st = function(data) {
 				latestTweetBeginningFlowingTime = parseInt(new Date/1);
+				stat.processTime = 0;
 				var k = parseInt(this);
 				//putToColumn('timeline',data);
 				for(var j in obj.account[k].next){
