@@ -103,6 +103,7 @@ function flow(type,number,data,account){
 		for(var key in ret){
 			if(key != "trash"){
 				for(var ley in obj.worker[number].next[key]){
+					stat.activeEdges.push([getCircleID("worker",number),getCircleID(obj.worker[number].next[key][ley].type,obj.worker[number].next[key][ley].number)]);
 					flow(obj.worker[number].next[key][ley].type,obj.worker[number].next[key][ley].number,ret[key],account);
 				}
 			}
@@ -149,7 +150,7 @@ function putToColumn(target,data,callback,account){
 	if(callback === undefined) callback = function(object){};
 	//$('#tweets').prepend("<P>"+JSON.stringify(data,null, "    ")+"</P><hr>");
 	//console.log(latestTweetBeginningFlowingTime)
-	stat.processTime = parseInt(new Date/1) - latestTweetBeginningFlowingTime;
+	stat.processTime = Math.max(stat.processTime,parseInt(new Date/1) - latestTweetBeginningFlowingTime);
 	updateStatusFile();
 	if($("#" + target).children(".subwindowCaption").children(".pinTop").hasClass("pinning")){
 		if($("#" + target).children(".noticebar").hasClass("pinning")){
@@ -403,6 +404,7 @@ function main(){
 		tw[key].verifyCredentials(sp.bind(key));
 		notice('[notice] Getting Home Timeline');
 		stat.totalTweets = 0;
+		stat.activeEdges = [];
 		var ht = function(err,data){
 			if(err){
 				throw new Error("Authorization Error");
@@ -412,6 +414,7 @@ function main(){
 			for(var j in obj.account[ky].next){
 				for(var k=data.length-1;k>=0;k--){
 					flow(obj.account[ky].next[j].type,obj.account[ky].next[j].number,data[k],ky);
+					stat.activeEdges.push([getCircleID("account",ky),getCircleID(obj.account[ky].next[j].type,obj.account[ky].next[j].number)]);
 					stat.totalTweets++;
 				}
 			}
@@ -425,11 +428,14 @@ function main(){
 			destroy_stream[key] = stream;
 			var st = function(data) {
 				latestTweetBeginningFlowingTime = parseInt(new Date/1);
+				stat.processTime = 0;
 				var k = parseInt(this);
+				stat.activeEdges = [];
 				//putToColumn('timeline',data);
 				for(var j in obj.account[k].next){
 					flow(obj.account[k].next[j].type,obj.account[k].next[j].number,data,k);
 					stat.totalTweets++;
+					stat.activeEdges.push([getCircleID("account",k), getCircleID(obj.account[k].next[j].type,obj.account[k].next[j].number)]);
 					updateStatusFile();
 				}
 			}
