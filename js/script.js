@@ -1,15 +1,14 @@
 var gui = require('nw.gui');
 var win = gui.Window.get();
 //win.showDevTools();
-var crypto = require('crypto');
 var twitter = require('ntwitter');
 var fs = require('fs');
 var OAuth = require('oauth').OAuth;
 var childwin = [];
-process.on('uncaughtException', function(err,a) {
+/*process.on('uncaughtException', function(err,a) {
 	alert(err);
 	throw new Error(err);
-});
+});*/
 var default_consumer_key = "5PBw3HtLbKXoAvF47Rtw";
 var default_consumer_secret = "2XwVyMe58FvJwGr2bgH19xuE02aeeXiwcRqZVjSo6A";
 
@@ -35,7 +34,6 @@ function watchStatusFile(event, filename) {
 		return;
 	}
 	console.log("Status file has been changed");
-	console.log(this);
 
 	this();
 
@@ -151,6 +149,12 @@ function changeAccount(number){
 }
 
 
+function getCircleID(type,number){
+	if(type=="account") return "circle_account_" + obj.account[number].screen_name;
+	if(type=="worker") return "circle_worker_" + obj.worker[number].id;
+	if(type=="column") return "circle_column_" + obj.column[number].id;
+}
+
 var auth_window;
 
 function add_account(callback,next){
@@ -235,7 +239,8 @@ $(document).ready(function(){
 				stat = {
 					"beginStreaming": 0,
 					"totalTweets": 0,
-					"processTime": 0
+					"processTime": 0,
+					"activeEdges":[]
 				};
 			}
 			if(existSettingFile){

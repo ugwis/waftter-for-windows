@@ -9,13 +9,16 @@ function painFocus(number){
 	current = number;
 }
 
-function getCircleID(type,number){
-	if(type=="account") return "circle_account_" + obj.account[number].screen_name;
-	if(type=="worker") return "circle_worker_" + obj.worker[number].id;
-	if(type=="column") return "circle_column_" + obj.column[number].id;
+function findArrayInArray(obj,array){
+	for(var i=0;i<array.length;i++){
+		if(array[i].toString() == obj.toString()) return i;
+	}
+	return -1;
 }
 
 function connectPoints(ctx,a,b){
+	if(findArrayInArray([a,b],stat.activeEdges) > -1) ctx.strokeStyle = 'rgb(0,122,204)';
+	else ctx.strokeStyle = 'rgb(255,255,255)';
 	ax = parseInt($("#" + a).css("left")) + parseInt($("#" + a).width())/2;
 	ay = parseInt($("#" + a).css("top")) + parseInt($("#" + a).height())/2;
 	bx = parseInt($("#" + b).css("left")) + parseInt($("#" + b).width())/2;
@@ -47,11 +50,9 @@ function refreshEdges(){
 	for(var key in obj.worker){
 		for(var ley in obj.worker[key].next){
 			if(ley == "trash") continue;
-			console.log(obj.worker[key].next[ley])
 			for(var mey in obj.worker[key].next[ley]){
 				a = getCircleID("worker",key);
 				b = getCircleID(obj.worker[key].next[ley][mey].type,obj.worker[key].next[ley][mey].number);
-				console.log(b);
 				connectPoints(ctx,a,b);
 			}
 		}
@@ -140,6 +141,7 @@ function main(){
 		stat = loadStatusFile();
 		$('#tpm').val(stat.totalTweets/(parseInt((new Date)/60000) - stat.beginStreaming)).trigger('change');
 		$('#ltc').val(stat.processTime).trigger('change');
+		refreshEdges();
 	}));
 	for(var key in obj.column){
 		additionalCircle("column",obj.column[key].id,obj.column[key].display);
