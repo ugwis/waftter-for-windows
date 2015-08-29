@@ -110,6 +110,8 @@ function flow(type,number,data,account){
 		}
 	} else if(type == "column"){
 		if(number != -1){
+			stat.processTime = Math.max(stat.processTime,parseInt(new Date/1) - latestTweetBeginningFlowingTime);
+			updateStatusFile();
 			if(isFlowing[obj.column[number].id]){
 				flowQueue[obj.column[number].id].enqueue([obj.column[number].id,data,account]);
 			} else {
@@ -150,8 +152,6 @@ function putToColumn(target,data,callback,account){
 	if(callback === undefined) callback = function(object){};
 	//$('#tweets').prepend("<P>"+JSON.stringify(data,null, "    ")+"</P><hr>");
 	//console.log(latestTweetBeginningFlowingTime)
-	stat.processTime = Math.max(stat.processTime,parseInt(new Date/1) - latestTweetBeginningFlowingTime);
-	updateStatusFile();
 	if($("#" + target).children(".subwindowCaption").children(".pinTop").hasClass("pinning")){
 		if($("#" + target).children(".noticebar").hasClass("pinning")){
 		} else {
