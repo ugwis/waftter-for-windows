@@ -136,7 +136,7 @@ function main(){
 		}
 	});
 	$('#mct').val(status["max tweet"]).trigger('change');
-	$('#tpm').val(stat.totalTweets/(parseInt((new Date)/60000) - stat.beginStreaming)).trigger('change');
+	setInterval("$('#tpm').val(stat.totalTweets/(parseInt((new Date)/60000) - stat.beginStreaming)).trigger('change');",1000);
 	fs.watch(statusFile, watchStatusFile.bind(function(){
 		stat = loadStatusFile();
 		$('#tpm').val(stat.totalTweets/(parseInt((new Date)/60000) - stat.beginStreaming)).trigger('change');
