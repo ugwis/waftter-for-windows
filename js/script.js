@@ -12,6 +12,8 @@ var childwin = [];
 var default_consumer_key = "5PBw3HtLbKXoAvF47Rtw";
 var default_consumer_secret = "2XwVyMe58FvJwGr2bgH19xuE02aeeXiwcRqZVjSo6A";
 
+var watcher = [];
+
 statusFile = "status.json";
 var stat;
 

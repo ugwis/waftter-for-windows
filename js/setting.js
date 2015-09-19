@@ -31,6 +31,7 @@ function connectPoints(ctx,a,b){
 }
 
 function refreshEdges(){
+	console.log("refresh");
 	var canvas = document.getElementById('canvas');
 	if ( ! canvas || ! canvas.getContext ) {
 		return false;
@@ -82,6 +83,9 @@ function main(){
 	})
 	$("#exit").click(function(){
 		//stream.close();
+		for(var key in watcher){
+			watcher[key].close();
+		}
 		win.close();
 	});
 
@@ -137,12 +141,12 @@ function main(){
 	});
 	$('#mct').val(status["max tweet"]).trigger('change');
 	setInterval("$('#tpm').val(stat.totalTweets/(parseInt((new Date)/60000) - stat.beginStreaming)).trigger('change');",1000);
-	fs.watch(statusFile, watchStatusFile.bind(function(){
+	watcher.push(fs.watch(statusFile, watchStatusFile.bind(function(){
 		stat = loadStatusFile();
 		$('#tpm').val(stat.totalTweets/(parseInt((new Date)/60000) - stat.beginStreaming)).trigger('change');
 		$('#ltc').val(stat.processTime).trigger('change');
 		refreshEdges();
-	}));
+	})));
 	for(var key in obj.column){
 		additionalCircle("column",obj.column[key].id,obj.column[key].display);
 	}
