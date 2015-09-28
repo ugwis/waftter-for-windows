@@ -1,6 +1,6 @@
 var gui = require('nw.gui');
 var win = gui.Window.get();
-//win.showDevTools();
+win.showDevTools();
 var twitter = require('ntwitter');
 var fs = require('fs');
 var OAuth = require('oauth').OAuth;

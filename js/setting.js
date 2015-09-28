@@ -193,6 +193,9 @@ function additionalCircle(type,id,option){
 			scroll: false ,
 			drag: function(e,ui){
 				refreshEdges();
+			},
+			stop: function(e,ui){
+				refreshEdges();
 			}
 		}).fadeIn('fast')
 	);
