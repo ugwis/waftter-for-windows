@@ -31,7 +31,6 @@ function updateStatusFile(callback){
 
 function watchStatusFile(event, filename) {
 	if(typeof(this) != "function") return;
-	// ファイル内容が変わったイベントでないなら無視
 	if (event !== 'change' || !watching) {
 		return;
 	}
@@ -39,7 +38,7 @@ function watchStatusFile(event, filename) {
 
 	this();
 
-//	fs.watch(statusFile, watchStatusFile.bind(this));
+/*	fs.watch(statusFile, watchStatusFile.bind(this));*/
 }
 
 
@@ -49,9 +48,9 @@ settingFile = "setting.json";
 
 function loadSettingFile(callback){
 	if(callback === undefined) callback = function(){};
-	// 参考 http://qiita.com/emadurandal/items/37fae542938907ef5d0c
+	/* source: http://qiita.com/emadurandal/items/37fae542938907ef5d0c */
 	Function.prototype.toJSON = Function.prototype.toString;
-	var parser = function(k,v){return v.toString().indexOf('function') === 0 ? eval('('+v+')') : v};
+	var parser = function(k,v){return v.toString().indexOf('function') === 0 ? eval('('+v+')') : v;};
 	obj = JSON.parse(fs.readFileSync(settingFile, 'utf8'),parser);
 	callback();
 }
@@ -61,18 +60,17 @@ var obj;
 var watching = true;
 
 function watchSettingFile(event, filename) {
-	// ファイル内容が変わったイベントでないなら無視
 	if (event !== 'change' || !watching) {
 		return;
 	}
 	console.log("Setting file has been changed");
 
-	for(key in childwin){
+	for(var key in childwin){
 		childwin[key].close();
 	}
 	win.reload();
 
-	//fs.watch(settingFile, watchSettingFile);
+	/*fs.watch(settingFile, watchSettingFile);*/
 }
 
 function updateSettingFile(callback){
@@ -86,8 +84,8 @@ function updateSettingFile(callback){
 	});
 }
 
-//キュー
-// http://keicode.com/script/scr25.php
+/* source
+/ http://keicode.com/script/scr25.php*/
 function Queue() {
 	this.__a = [];
 }
@@ -112,8 +110,8 @@ Queue.prototype.toString = function() {
 };
 
 
-//文字の長さを返す関数(サロゲートペア対応)
-// http://teppeis.hatenablog.com/entry/2014/01/surrogate-pair-in-javascript
+/* unicode
+ http://teppeis.hatenablog.com/entry/2014/01/surrogate-pair-in-javascript*/
 function strlen(str) {
   return str.length - (str.match(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g)||[]).length;
 }
@@ -194,7 +192,6 @@ function add_account(callback,next){
 						function(error,oauth_access_token,oauth_access_token_secret,result){
 							if(error){
 								throw new Error(error);
-								return;
 							}
 							var twitveri = new twitter({
 								consumer_key: obj.option.consumer_key,
@@ -205,7 +202,6 @@ function add_account(callback,next){
 							twitveri.verifyCredentials(function(err,data){
 								if(err){
 									throw new Error(err);
-									return;
 								}
 								console.log(data);
 								obj.account.push({

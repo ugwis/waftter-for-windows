@@ -7,6 +7,7 @@
 	<meta charset="UTF-8">
 	<script src="./js/jquery-2.1.3.min.js"></script>
 	<script src="./js/jquery-ui.min.js"></script>
+	<script src="./ace-builds/src-noconflict/ace.js"></script>
 	<script src="./js/script.js"></script>
 	<script src="./js/setting.js"></script>
 	<script src="./js/jquery.knob.js"></script>
@@ -47,10 +48,11 @@
 						</div>
 						<div id="pane1" class="controlpane">
 							<h2>account setting</h2>
-							<img src="images/sign-in-with-twitter-gray.png" height="28" width="158"></img>
+							<p id="user_id"></p>
 						</div>
 						<div id="pane2" class="controlpane">
 							<h2>worker setting</h2>
+							<div id="jseditor">function(){}</div>
 						</div>
 						<div id="pane3" class="controlpane">
 							<h2>column setting</h2>

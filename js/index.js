@@ -144,14 +144,12 @@ function startFlow(target){
 	flowInterval(target);
 }
 
-//カラムにツイートを流すときに使う
+/* カラムにツイートを流すときに使う
 // target...対象のカラムのDOMid
 // data...Twitterから得られるJSONデータ
-// account...アカウント番号(0~)を指定
+// account...アカウント番号(0~)を指定*/
 function putToColumn(target,data,callback,account){
 	if(callback === undefined) callback = function(object){};
-	//$('#tweets').prepend("<P>"+JSON.stringify(data,null, "    ")+"</P><hr>");
-	//console.log(latestTweetBeginningFlowingTime)
 	if($("#" + target).children(".subwindowCaption").children(".pinTop").hasClass("pinning")){
 		if($("#" + target).children(".noticebar").hasClass("pinning")){
 		} else {
@@ -251,7 +249,7 @@ function putToColumn(target,data,callback,account){
 			if(data.event !== undefined){
 				if(data.event == "favorite"){
 					t = "favorited_" + target + "_" + data.target_object.id_str;
-					if(!$("#" + t).length != 0){
+					if($("#" + t).length === 0){
 						$("#" + target).children(".tweets").prepend(
 							$('<div>').attr('id',t).addClass("notice").prepend(
 								$("<p>").addClass("text")
@@ -400,7 +398,7 @@ function main(){
 					).attr('id',ky)
 				);
 			}
-		}
+		};
 		tw[key].verifyCredentials(sp.bind(key));
 		notice('[notice] Getting Home Timeline');
 		stat.totalTweets = 0;
@@ -408,7 +406,6 @@ function main(){
 		var ht = function(err,data){
 			if(err){
 				throw new Error("Authorization Error");
-				return;
 			}
 			var ky = parseInt(this);
 			for(var j in obj.account[ky].next){
@@ -418,7 +415,7 @@ function main(){
 					stat.totalTweets++;
 				}
 			}
-		}
+		};
 		tw[key].getHomeTimeline(ht.bind(key));
 		console.log(tw[key]);
 		notice('[notice] Connecting Streaming API');
@@ -438,7 +435,7 @@ function main(){
 					stat.activeEdges.push([getCircleID("account",k), getCircleID(obj.account[k].next[j].type,obj.account[k].next[j].number)]);
 					updateStatusFile();
 				}
-			}
+			};
 			stream.on('data', st.bind(key));
 			stream.on('error', function(err,data) {
 				console.log(data);
