@@ -20,7 +20,7 @@
 				<div id="without_circle" onclick="circleFocus('none');"></div>
 				<canvas id="canvas"></canvas>
 				<div style="display:block;position:absolute;top:50%;color:#FFF;line-height:50px;margin:-75px 0 0 15px;width:100px;">
-					<p class="add_circle_text" onclick="add_account(function(data){additionalCircle('account',data.profile_image_url);});">+ Account</p>
+					<p class="add_circle_text" onclick="add_account(function(data){additionalCircle('account',data.screen_name,data);});">+ Account</p>
 					<p class="add_circle_text" onclick="additionalCircle('worker');">+ Worker</p>
 					<p class="add_circle_text" onclick="additionalCircle('column');">+ Column</p>
 				</div>

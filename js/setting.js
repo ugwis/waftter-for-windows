@@ -1,4 +1,20 @@
 
+var ischanged = false;
+
+function exit(){
+	//stream.close();
+	for(var key in watcher){
+		watcher[key].close();
+	}
+	if(ischanged){
+		updateSettingFile(function(){
+			win.close();
+		});
+	} else {
+		win.close();
+	}
+}
+process.on('exit', exit);
 
 current = 0;
 function painFocus(number){
@@ -67,7 +83,7 @@ function main(){
 	win.on('blur',function(){
 		$("body").css("background-color","#5a5a5a");
 	});
-	var isMaximum=false;
+	var isMaximum = false;
 	$("#minimize").click(function(){
 		win.minimize();
 	});
@@ -79,15 +95,9 @@ function main(){
 			win.maximize();
 			win.setResizable(false);
 		}
-		isMaximum=!isMaximum;
+		isMaximum =! isMaximum;
 	})
-	$("#exit").click(function(){
-		//stream.close();
-		for(var key in watcher){
-			watcher[key].close();
-		}
-		win.close();
-	});
+	$("#exit").click(exit);
     var editor = ace.edit("jseditor");
     editor.setTheme("ace/theme/monokai");
     editor.setFontSize(14);
@@ -154,38 +164,43 @@ function main(){
 		refreshEdges();
 	})));
 	for(var key in obj.column){
-		additionalCircle("column",obj.column[key].id,obj.column[key].display);
+		additionalCircle("column",obj.column[key].id,obj.column[key]);
 	}
 	for(var key in obj.worker){
-		additionalCircle("worker",obj.worker[key].id,obj.worker[key].display);
+		additionalCircle("worker",obj.worker[key].id,obj.worker[key]);
 	}
 	for(var key in obj.account){
-		additionalCircle("account",obj.account[key].screen_name,obj.account[key].profile_image_url);
+		additionalCircle("account",obj.account[key].screen_name,obj.account[key]);
 	}
 	refreshEdges();
 }
 
-function additionalCircle(type,id,option){
+function additionalCircle(type,id,circle){
+	if(circle === undefined) circle = [];
 	color = "";
 	if(type == "account"){
 		color = "#FF0047"
-		html = $('<img/>').attr("src",option);
+		html = $('<img/>').attr("src",circle.profile_image_url);
 		focus_number = 1;
 	}
 	if(type == "worker"){
 		color = "#EBFF00"
-		html = $('<p/>').html(option);
+		html = $('<p/>').html(circle.display);
 		focus_number = 2;
 	}
 	if(type == "column"){
 		color = "#00B8FF"
-		html = $('<p/>').html(option);
+		html = $('<p/>').html(circle.display);
 		focus_number = 3;
 	}
+	var left = Math.random()*($('#graphs').width()-77);
+	var top = Math.random()*($('#graphs').height()-77);
+	if(circle.left !== undefined) left = circle.left;
+	if(circle.top !== undefined) top = circle.top;
 	$('#graphs').append(
 		$('<div/>').css({
-			left:Math.random()*($('#graphs').width()-77),
-			top:Math.random()*($('#graphs').height()-77),
+			left:left,
+			top:top,
 			position:'absolute'
 		}).attr('onclick','circleFocus("' + type + '","' + id + '");')
 		  .attr('id',"circle_" + type + "_" + id)
@@ -201,6 +216,10 @@ function additionalCircle(type,id,option){
 				refreshEdges();
 			},
 			stop: function(e,ui){
+				if(circle !== []){
+					circle.top = parseInt($("#circle_" + type + "_" + id).css("top"));
+					circle.left = parseInt($("#circle_" + type + "_" + id).css("left"));
+				}
 				refreshEdges();
 			}
 		}).fadeIn('fast')

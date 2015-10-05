@@ -1,4 +1,15 @@
 
+function exit(){
+	//stream.close();
+	for(var key in childwin){
+		childwin[key].close();
+	}
+	updateSettingFile(function(){
+		win.close();
+	});
+}
+process.on('exit', exit);
+
 //鍵マークを押したときに呼ばれるメソッド(objはロックする対象のカラムのjQueryオブジェクト)
 function pinTopThisColumn(obj){
 	if(obj.hasClass('pinning')){
@@ -335,15 +346,7 @@ function main(){
 		}
 		isMaximum=!isMaximum;
 	});
-	$("#exit").click(function(){
-		//stream.close();
-		for(var key in childwin){
-			childwin[key].close();
-		}
-		updateSettingFile(function(){
-			win.close();
-		});
-	});
+	$("#exit").click(exit);
 	$(".mainAccountUser").click(function(){
 		if($('#settings').css("display") == "none"){
 			$('.protector').addClass('protect');

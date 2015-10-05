@@ -1,3 +1,10 @@
+
+function exit(){
+	//stream.close();
+	win.close();
+}
+process.on('exit', exit);
+
 function putToMain(data){
 	//$('#tweets').prepend("<P>"+JSON.stringify(data,null, "    ")+"</P><hr>");
 	target = "targetTweet";
@@ -100,10 +107,7 @@ function main(){
 		}
 		isMaximum=!isMaximum;
 	});
-	$("#exit").click(function(){
-		//stream.close();
-		win.close();
-	});
+	$("#exit").click(exit);
 	$(".mainAccountUser").click(function(){
 		$('#settings').slideToggle("fast");
 	});
