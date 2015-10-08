@@ -216,6 +216,7 @@ function additionalCircle(type,id,circle){
 				refreshEdges();
 			},
 			stop: function(e,ui){
+				ischanged = true;
 				if(circle !== []){
 					circle.top = parseInt($("#circle_" + type + "_" + id).css("top"));
 					circle.left = parseInt($("#circle_" + type + "_" + id).css("left"));
@@ -234,7 +235,10 @@ function additionalCircle(type,id,circle){
 function circleFocus(type,id){
 	$(".circle_focused").removeClass('circle_focused');
 	if(type == "none") painFocus(0);
-	if(type == "account") painFocus(1);
+	if(type == "account"){
+		painFocus(1);
+		$("#user_id").html("<b>Twitter Screen Name:</b> " + id);
+	}
 	if(type == "worker") painFocus(2);
 	if(type == "column") painFocus(3);
 	$("#circle_" + type + "_" + id).addClass('circle_focused');

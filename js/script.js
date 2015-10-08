@@ -1,14 +1,14 @@
 var gui = require('nw.gui');
 var win = gui.Window.get();
-win.showDevTools();
+//win.showDevTools();
 var twitter = require('ntwitter');
 var fs = require('fs');
 var OAuth = require('oauth').OAuth;
 var childwin = [];
-/*process.on('uncaughtException', function(err,a) {
-	alert(err);
+process.on('uncaughtException', function(err,a) {
+	new Notification(err);
 	throw new Error(err);
-});*/
+});
 var default_consumer_key = "5PBw3HtLbKXoAvF47Rtw";
 var default_consumer_secret = "2XwVyMe58FvJwGr2bgH19xuE02aeeXiwcRqZVjSo6A";
 

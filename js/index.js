@@ -390,8 +390,8 @@ function main(){
 			obj.account[ky].profile_image_url = data.profile_image_url;
 			if(ky === 0){
 				$('.mainAccountUser').append(
-					$('<span>').css({"float":"left","font-size":"12px","margin-right":"5px"}).append(obj.account[ky].screen_name),
-					$('<img>').css({"float":"right","width":"35px","height":"35px"}).attr("src",obj.account[ky].profile_image_url)
+					$('<img>').css({"float":"right","width":"35px","height":"35px"}).attr("src",obj.account[ky].profile_image_url),
+					$('<span>').css({"float":"right","font-size":"12px","margin-right":"5px"}).append(obj.account[ky].screen_name)
 				).attr('id',ky);
 			} else {
 				$('#settings').prepend(
