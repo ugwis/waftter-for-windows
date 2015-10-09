@@ -1,4 +1,5 @@
 
+//変更があったかどうか
 var ischanged = false;
 
 function exit(){
@@ -25,6 +26,7 @@ function painFocus(number){
 	current = number;
 }
 
+//配列の中で配列を探す
 function findArrayInArray(obj,array){
 	for(var i=0;i<array.length;i++){
 		if(array[i].toString() == obj.toString()) return i;
@@ -32,6 +34,7 @@ function findArrayInArray(obj,array){
 	return -1;
 }
 
+//canvasで指定したポイント同士を線で結ぶ
 function connectPoints(ctx,a,b){
 	if(findArrayInArray([a,b],stat.activeEdges) > -1) ctx.strokeStyle = 'rgb(0,122,204)';
 	else ctx.strokeStyle = 'rgb(255,255,255)';
@@ -46,6 +49,7 @@ function connectPoints(ctx,a,b){
 	ctx.stroke();
 }
 
+//エッジの表示を更新
 function refreshEdges(){
 	console.log("refresh");
 	var canvas = document.getElementById('canvas');
@@ -175,6 +179,7 @@ function main(){
 	refreshEdges();
 }
 
+//サークルを追加する
 function additionalCircle(type,id,circle){
 	if(circle === undefined) circle = [];
 	color = "";
@@ -232,6 +237,7 @@ function additionalCircle(type,id,circle){
 
 }
 
+//サークルをクリックされた時
 function circleFocus(type,id){
 	$(".circle_focused").removeClass('circle_focused');
 	if(type == "none") painFocus(0);
