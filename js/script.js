@@ -233,6 +233,14 @@ $(document).ready(function(){
 			console.log("status file exist:" + exist);
 			if(exist){
 				stat = loadStatusFile();
+				if(stat == {}){
+					stat = {
+						"beginStreaming": 0,
+						"totalTweets": 0,
+						"processTime": 0,
+						"activeEdges":[]
+					};
+				}
 			} else {
 				stat = {
 					"beginStreaming": 0,
