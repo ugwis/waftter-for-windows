@@ -4,6 +4,7 @@ var win = gui.Window.get();
 var twitter = require('ntwitter');
 var fs = require('fs');
 var OAuth = require('oauth').OAuth;
+var path = require('path');
 var childwin = [];
 process.on('uncaughtException', function(err,a) {
 	new Notification(err);
@@ -12,9 +13,11 @@ process.on('uncaughtException', function(err,a) {
 var default_consumer_key = "5PBw3HtLbKXoAvF47Rtw";
 var default_consumer_secret = "2XwVyMe58FvJwGr2bgH19xuE02aeeXiwcRqZVjSo6A";
 
+var cd = path.dirname(process.execPath) + "\\";
+
 var watcher = [];
 
-statusFile = "status.json";
+statusFile = cd + "status.json";
 var stat;
 
 function loadStatusFile(){
@@ -44,7 +47,7 @@ function watchStatusFile(event, filename) {
 
 var tw = [];
 
-settingFile = "setting.json";
+settingFile = cd + "setting.json";
 
 function loadSettingFile(callback){
 	if(callback === undefined) callback = function(){};
@@ -223,6 +226,10 @@ function add_account(callback,next){
 			});
 		}
 	});
+}
+
+function input_id(callback,next){
+
 }
 
 $(document).ready(function(){

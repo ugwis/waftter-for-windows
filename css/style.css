@@ -424,46 +424,6 @@ body {
 	display: none!important;
 }
 
-#graphs {
-	background: #181818;
-	width:100%;
-	height:50%;
-	position: absolute;
-	top:0px;
-}
-
-#control {
-	background:url('../images/back_trans.png');
-	width:100%;
-	height:50%;
-	overflow:hidden;
-	position:absolute;
-	top: 50%;
-}
-
-.controlpanes {
-	height:100%;
-	width: 900px;
-	margin:0px auto;
-}
-
-.controlpanes_inner {
-	width: 3600px;
-	position:relative;
-	transition: left 0.3s ease 0
-}
-
-.controlpane {
-	width:900px;
-	height:100%;
-	opacity:0.6;
-	float:left;
-}
-
-.paneActive {
-	opacity:1.0!important;
-}
-
 .updating {
 	position:fixed;
 	top: 0px;
@@ -524,25 +484,6 @@ body {
 	height: 100%;
 }
 
-.add_circle_text {
-	margin:30px 0;
-	line-height:10px;
-	cursor:pointer;
-	color: #fff;
-}
-
-.add_circle_text:hover {
-	color: #D10!important;
-}
-
 .circle_focused {
 	box-shadow: 0px 0px 20px;
-}
-
-#without_circle {
-	width: 100%;
-	height: 100%;
-	position: absolute;
-	top: 0px;
-	left: 0px;
 }
