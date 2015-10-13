@@ -4,8 +4,11 @@ NW.jsで動いていて，JavaScriptを記述して自分好みに処理を行�
 まだ開発中（作りかけ）です．
 
 ## 起動方法
-まだ完成していないのでバイナリパッケージは配布していません．
+### 実行ファイルから起動
+<https://github.com/waftter/waftter-for-windows/release>
+### ソースから起動
 NW.jsをインストールし，コマンドプロンプトでnw waftter-for-windowsと入力してください．
+<https://github.com/waftter/waftter-for-windows/wiki/launch-by-source-code>
 
 ## 特徴  
 1. 設定画面でJavaSciptを書くことが出来るので，自動返信からツイートを全てアラビア語に翻訳するなど自分好みのカスタマイズを行うことができます．  
