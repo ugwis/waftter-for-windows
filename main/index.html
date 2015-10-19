@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Waftter</title>
+	<link rel="stylesheet" href="./css/style.css">
+	<link rel="stylesheet" href="./css/quicksand.css">
+	<meta charset="UTF-8">
+	<script src="./js/jquery-2.1.3.min.js"></script>
+	<script src="./js/script.js"></script>
+	<script src="./js/index.js"></script>
+</head>
+<body>
+	<div id="inner">
+		<img src="./images/waftter_logo.png">
+		<div id="main">
+			<div id="columns">
+			</div>
+		</div>
+	</div>
+	<div class="caption">
+		<div id="account">
+			<div class="button2 mainAccountUser" id="0">
+			</div>
+			<ul id="settings">
+				<li class="button2" style="padding-top:3px;" onclick="childwin.push(gui.Window.open('update.html?account=' + $('.mainAccountUser').attr('id'),{'transparent': true,'icon':'images/waftter_icon.png','toolbar': false,'frame': false,'width': 500,'height': 200}));">
+					<p><span class="web-symbols" style="margin-right:10px;">&#0115;</span>Tweet</p>
+				</li>
+				<!--<li class="button2" style="padding-top:3px;" onclick="childwin.push(gui.Window.open('settings.html',{'transparent': true,'icon':'images/waftter_icon.png','toolbar': false,'frame': false,'width': 1022,'height': 800}));">
+					<p><span class="web-symbols" style="margin-right:10px;">&#094;</span>Settings</p>
+				</li>-->
+				<li class="button2" style="padding-top:3px;" onclick="childwin.push(gui.Window.open('version.html',{'transparent': true,'icon':'images/waftter_icon.png','toolbar': false,'frame': false,'width': 500,'height': 200}));">
+					<p><span class="web-symbols" style="margin-right:10px;">&#0067;</span>Version</p>
+				</li>
+				<li class="button2" style="padding-top:3px;" onclick="win.showDevTools();">
+					<p><span class="web-symbols" style="margin-right:10px;">&#0101;</span>Debug</p>
+				</li>
+			</ul>
+		</div>
+		<div id="minimize" class="button"><p>_</p></div>
+		<div id="maximize" class="button"><p>□</p></div>
+		<div id="exit" class="button"><p>×</p></div>
+	</div>
+	<div class="bottomText"><p></p></div>
+	<div class="protector" style="z-index:2;"></div>
+</body>
+</html>

@@ -1,0 +1,15 @@
+{
+  "name": "waftter config",
+  "main": "index.html",
+  "description":"Waftter setting window",
+  "version":"0.0000",
+  "keywords":["twitter client","twitter","waftter","kud","config"],
+  "window":{
+  	"transparent": true,
+  	"icon":"images/waftter_icon.png",
+  	"toolbar": false,
+  	"frame": false,
+  	"width": 1022,
+  	"height": 800
+  }
+}
