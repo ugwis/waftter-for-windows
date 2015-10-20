@@ -1,6 +1,6 @@
 var gui = require('nw.gui');
 var win = gui.Window.get();
-//win.showDevTools();
+win.showDevTools();
 var twitter = require('ntwitter');
 var fs = require('fs');
 var OAuth = require('oauth').OAuth;
@@ -8,12 +8,13 @@ var path = require('path');
 var childwin = [];
 process.on('uncaughtException', function(err,a) {
 	new Notification(err);
-	throw new Error(err);
+	//throw new Error(err);
 });
 var default_consumer_key = "5PBw3HtLbKXoAvF47Rtw";
 var default_consumer_secret = "2XwVyMe58FvJwGr2bgH19xuE02aeeXiwcRqZVjSo6A";
 
 var cd = path.dirname(process.execPath) + "\\";
+cd = "..\\";
 
 var watcher = [];
 
@@ -22,7 +23,20 @@ var stat;
 
 function loadStatusFile(){
 	console.log("loadStatusFile");
-	return JSON.parse(fs.readFileSync(statusFile, 'utf8'));
+	try {
+		stat = JSON.parse(fs.readFileSync(statusFile, 'utf8'));
+	}
+	catch (e){
+		stat = {
+			"beginStreaming": 0,
+			"totalTweets": 0,
+			"processTime": 0,
+			"activeEdges":[]
+		};
+		updateStatusFile(function(){
+			win.reload();
+		});
+	}
 }
 
 function updateStatusFile(callback){
@@ -54,7 +68,33 @@ function loadSettingFile(callback){
 	/* source: http://qiita.com/emadurandal/items/37fae542938907ef5d0c */
 	Function.prototype.toJSON = Function.prototype.toString;
 	var parser = function(k,v){return v.toString().indexOf('function') === 0 ? eval('('+v+')') : v;};
-	obj = JSON.parse(fs.readFileSync(settingFile, 'utf8'),parser);
+	try {
+		obj = JSON.parse(fs.readFileSync(settingFile, 'utf8'),parser);
+	}
+	catch (e) {
+		obj = {
+			"account":[],
+			"worker":[],
+			"column":[
+				{
+					"display": "Timeline",
+					"id": "timeline"
+				}
+			],
+			"option":{
+				"consumer_key":default_consumer_key,
+				"consumer_secret":default_consumer_secret
+			}
+		};
+		add_account(function(){
+			updateSettingFile(function(){
+				watchSettingFile('change',settingFile);
+			});
+		},[{
+			"type": "column",
+			"number": 0
+		}]);
+	}
 	callback();
 }
 
@@ -228,65 +268,10 @@ function add_account(callback,next){
 	});
 }
 
-function input_id(callback,next){
-
-}
-
 $(document).ready(function(){
-
-	fs.exists(settingFile,function(existSettingFile){
-		console.log("setting file exist:" + existSettingFile);
-		fs.exists(statusFile,function(exist){
-			console.log("status file exist:" + exist);
-			if(exist){
-				stat = loadStatusFile();
-				if(stat == {}){
-					stat = {
-						"beginStreaming": 0,
-						"totalTweets": 0,
-						"processTime": 0,
-						"activeEdges":[]
-					};
-				}
-			} else {
-				stat = {
-					"beginStreaming": 0,
-					"totalTweets": 0,
-					"processTime": 0,
-					"activeEdges":[]
-				};
-			}
-			if(existSettingFile){
-				loadSettingFile(function(){
-					fs.watch(settingFile, watchSettingFile);
-					main();
-				});
-			} else {
-				obj = {
-					"account":[],
-					"worker":[],
-					"column":[
-						{
-							"display": "Timeline",
-							"id": "timeline"
-						}
-					],
-					"option":{
-						"consumer_key":default_consumer_key,
-						"consumer_secret":default_consumer_secret
-					}
-				};
-				updateSettingFile(function(){
-					add_account(function(){
-						updateSettingFile(function(){
-							watchSettingFile('change',settingFile);
-						});
-					},[{
-						"type": "column",
-						"number": 0
-					}]);
-				});
-			}
-		});
+	loadStatusFile();
+	loadSettingFile(function(){
+		fs.watch(settingFile, watchSettingFile);
+		main();
 	});
 });

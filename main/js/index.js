@@ -31,6 +31,8 @@ var flowQueue = [];
 var tweetQueue = [];
 var columnWidth = 410;
 
+var max_column = 20;
+
 //新しいカラムを追加するときに使うメソッド
 function addColumn(id,display){
 	isFlowing[id] = false;
@@ -252,7 +254,7 @@ function putToColumn(target,data,callback,account){
 			  .css({"color":"#FFF","font-size":"small","float":"right"})
 			  .attr({"onclick":"gui.Shell.openExternal('" + $('#' + id).children(".bottomArea").children(".sourceArea").children("a").attr("href") + "');","href":"#"});
 			tweetQueue[target].enqueue(id);
-			if(tweetQueue[target].size() > 10){
+			if(tweetQueue[target].size() > max_column){
 				$('#' + tweetQueue[target].dequeue()).remove();
 			}
 		} else {
