@@ -15,4 +15,4 @@ NW.jsをインストールし，コマンドプロンプトでnw waftter-for-win
 2. 流れてくるツイートを一時的にとめることが出来るので，誤操作が起きません
 3. かっこいいデザイン（だと思ってる
 
-![waftter](./images/waftter.png)
+![waftter](./waftter.png)
